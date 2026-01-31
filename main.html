@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Adventure Hub</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body class="setup-bg">
+    <nav class="game-nav">
+      <a href="shopping.html" class="nav-item">🛍️ Shopping</a>
+      <a href="garden.html" class="nav-item">🌻 Garden</a>
+      <a href="chores.html" class="nav-item">🧹 Chores</a>
+      <a href="bank.html" class="nav-item">🏦 Bank</a>
+    </nav>
+
+    <div class="stats-board">
+      <h3>Your Progress</h3>
+      <p>Wallet: $<span id="stat-wallet">0</span></p>
+      <hr />
+      <p><strong>Goal:</strong> <span id="stat-goal-name">Loading...</span></p>
+      <p><strong>Still Need:</strong> $<span id="stat-needed">0</span></p>
+      <hr />
+      <p>Spendings: $<span id="stat-spendings">0</span></p>
+      <p>Savings: $<span id="stat-savings">0</span></p>
+      <p>Rainy Day: $<span id="stat-rainyDay">0</span></p>
+    </div>
+
+    <div class="main-content">
+      <h1>The Adventure Hub</h1>
+      <p>Where would you like to go next?</p>
+
+      <div class="hub-visuals"></div>
+    </div>
+
+    <div class="penny-fixed-corner" onclick="togglePennyChat()">
+      <img src="mascot.png" alt="Penny" id="penny-icon" />
+      <div class="notification-dot">!</div>
+    </div>
+
+    <div id="penny-chat-window" class="chat-hidden">
+      <div class="chat-header">
+        <span>Penny's Tips 🐷</span>
+        <button onclick="togglePennyChat()" class="close-chat">×</button>
+      </div>
+      <div id="chat-messages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="user-query" placeholder="Ask Penny..." />
+        <button onclick="sendToGemini()">Send</button>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module" src="script-main.js"></script>
+  </body>
+</html>

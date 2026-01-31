@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Money Jars</title>
+    <link rel="stylesheet" href="jars.css" />
+  </head>
+  <body class="jar-bg">
+    <div class="stats-board">
+      <p>Wallet: $<span id="stat-wallet">50</span></p>
+      <hr />
+      <p>Goal: <span id="stat-goal-name">Prize</span></p>
+      <p>Still Need: $<span id="stat-needed">0</span></p>
+      <hr />
+      <p>Spendings: $<span id="stat-spendings">0</span></p>
+      <p>Savings: $<span id="stat-savings">0</span></p>
+      <p>Rainy Day: $<span id="stat-rainyDay">0</span></p>
+    </div>
+
+    <div class="penny-fixed-corner" onclick="togglePennyChat()">
+      <img src="mascot.png" alt="Penny" id="penny-icon" />
+    </div>
+
+    <div class="jar-container">
+      <div
+        id="jar-spendings"
+        class="jar-card float-1"
+        onclick="allocateMoney('spendings')"
+      >
+        <img src="jars/spendings.png" alt="Spendings" />
+        <h3>Spendings</h3>
+      </div>
+
+      <div
+        id="jar-savings"
+        class="jar-card float-2"
+        onclick="allocateMoney('savings')"
+      >
+        <img src="jars/savings.png" alt="Savings" />
+        <h3>Savings</h3>
+      </div>
+
+      <div
+        id="jar-rainyDay"
+        class="jar-card float-3"
+        onclick="allocateMoney('rainyDay')"
+      >
+        <img src="jars/rainyDay.png" alt="Rainy Day" />
+        <h3>Rainy Day</h3>
+      </div>
+    </div>
+
+    <div id="penny-chat-window" class="chat-hidden">
+      <div class="chat-header">
+        <span>Penny's Tips 🐷</span>
+        <button onclick="togglePennyChat()" class="close-chat">×</button>
+      </div>
+      <div id="chat-messages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="user-query" placeholder="Ask Penny..." />
+        <button onclick="sendToGemini()">Send</button>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

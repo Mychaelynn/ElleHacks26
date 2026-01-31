@@ -1,0 +1,210 @@
+/* 1. Main Background */
+.shop-bg {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url("shopBackground.png") no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  overflow: hidden;
+}
+
+/* 2. Header Box */
+.shop-header {
+  text-align: center;
+  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  display: inline-block;
+  padding: 10px 40px;
+  border-radius: 50px;
+  border: 3px solid #facc15;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 3. The Toy Layout */
+.toy-shelf {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  margin-top: 10vh; /* Adjust this to make toys sit on your drawn shelf */
+}
+
+.toy-card {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 200px;
+}
+
+.toy-img-asset {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  /* This glow helps the item stand out from the background */
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.toy-card h3 {
+  color: #1e40af;
+  background: white;
+  border-radius: 10px;
+}
+.price {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #16a34a;
+  background: white;
+  border-radius: 10px;
+}
+
+/* 4. Animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.floating-1 {
+  animation: float 3s ease-in-out infinite;
+}
+.floating-2 {
+  animation: float 3.5s ease-in-out infinite;
+}
+.floating-3 {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 5. Mascot & Chat */
+.penny-fixed-corner {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+#penny-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #22c55e;
+  background: white;
+}
+.chat-hidden {
+  display: none !important;
+}
+#penny-chat-window {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border-radius: 15px;
+  border: 3px solid #22c55e;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+#penny-chat-window {
+  position: fixed;
+  bottom: 100px; /* Sits above the fixed mascot */
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border: 2px solid #22c55e;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+.chat-hidden {
+  display: none !important;
+}
+
+.chat-header {
+  background: #dcfce7;
+  padding: 10px;
+  border-bottom: 2px solid #22c55e;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+#chat-messages {
+  flex: 1; /* Takes up all space except header/input */
+  padding: 10px;
+  overflow-y: auto; /* Adds scrollbar only when needed */
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth; /* Nice sliding effect */
+}
+
+.penny-msg {
+  color: #166534;
+  background: #f0fdf4;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+.user-msg {
+  color: #1e40af;
+  background: #eff6ff;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 5px 0;
+  text-align: right;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+#user-query {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* 5. Mascot & Chat - UPDATED */
+.penny-fixed-corner {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 2000; /* Increased to be higher than everything else */
+  transition: transform 0.3s;
+}
+
+#penny-chat-window {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 320px;
+  height: 450px; /* Fixed height is key */
+  background: white;
+  border: 3px solid #22c55e;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}

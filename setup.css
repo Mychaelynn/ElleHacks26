@@ -1,0 +1,135 @@
+/* Penny in the Top Right */
+.penny-fixed-corner {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+.penny-fixed-corner:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+#penny-icon {
+  width: 70px;
+  height: 70px;
+  border: 3px solid #22c55e;
+  border-radius: 50%;
+  background: white;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 20px;
+}
+
+/* Setup Card */
+.setup-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.welcome-box {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+}
+
+.next-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+#penny-chat-window {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 320px;
+  height: 450px; /* Fixed height is key */
+  background: white;
+  border: 3px solid #22c55e;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.chat-hidden {
+  display: none !important;
+}
+
+.chat-header {
+  background: #dcfce7;
+  padding: 10px;
+  border-bottom: 2px solid #22c55e;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+#chat-messages {
+  flex: 1; /* Takes up all space except header/input */
+  padding: 10px;
+  overflow-y: auto; /* Adds scrollbar only when needed */
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth; /* Nice sliding effect */
+}
+
+.penny-msg {
+  color: #166534;
+  background: #f0fdf4;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+.user-msg {
+  color: #1e40af;
+  background: #eff6ff;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 5px 0;
+  text-align: right;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+#user-query {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}

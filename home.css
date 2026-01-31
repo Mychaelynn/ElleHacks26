@@ -1,0 +1,71 @@
+/* 1. Background Setup */
+.home-bg {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  /* Use your custom image here */
+  background: url("homeBackground.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden; /* Prevents scrollbars */
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+/* 2. Dark Overlay to make text pop */
+.overlay {
+  background: rgba(0, 0, 0, 0.4); /* 40% dark tint */
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 3. Title Styling */
+.game-title {
+  color: white;
+  font-size: 3.5rem;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 30px;
+}
+.game-title span {
+  color: #facc15;
+} /* Gold color for Treasure */
+
+/* 4. Mascot Animation */
+.mascot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+.floating-mascot {
+  width: 150px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* 5. Start Button */
+.start-btn {
+  background: #22c55e;
+  color: white;
+  text-decoration: none;
+  padding: 20px 50px;
+  border-radius: 50px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+.start-btn:hover {
+  transform: scale(1.1);
+  background: #16a34a;
+}

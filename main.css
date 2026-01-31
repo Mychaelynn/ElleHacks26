@@ -1,0 +1,249 @@
+/* 1. Global Styles & Background */
+.setup-bg {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  /* Applying your home background image */
+  background: url("homeBackground.png") no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  overflow-x: hidden;
+}
+
+/* 2. Navigation Bar Styles */
+.game-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
+  border-bottom: 5px solid #22c55e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #166534;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 12px 25px;
+  background: white;
+  border: 3px solid #22c55e;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-item:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: #dcfce7;
+  box-shadow: 0 6px 15px rgba(34, 197, 94, 0.3);
+}
+
+/* 3. Main Content Area */
+.main-content {
+  text-align: center;
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.main-content h1 {
+  font-size: 3rem;
+  color: #166534;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+  margin-bottom: 10px;
+}
+
+.main-content p {
+  font-size: 1.5rem;
+  color: #14532d;
+  background: rgba(255, 255, 255, 0.6);
+  display: inline-block;
+  padding: 5px 20px;
+  border-radius: 15px;
+}
+
+/* 4. Penny Chat UI */
+.chat-hidden {
+  display: none !important;
+}
+
+.penny-fixed-corner {
+  position: fixed;
+  bottom: 20px; /* Moved to bottom for main hub layout */
+  right: 20px;
+  cursor: pointer;
+  z-index: 2000;
+  transition: transform 0.3s ease;
+}
+
+.penny-fixed-corner:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+#penny-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 5px solid #22c55e;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#penny-chat-window {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  width: 340px;
+  height: 480px;
+  background: white;
+  border: 4px solid #22c55e;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.chat-header {
+  background: #22c55e;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.close-chat {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fffb;
+  scroll-behavior: smooth;
+}
+
+/* Chat Bubbles */
+.penny-msg {
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px;
+  border-radius: 15px 15px 15px 5px;
+  align-self: flex-start;
+  max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  white-space: pre-line;
+}
+
+.user-msg {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 12px;
+  border-radius: 15px 15px 5px 15px;
+  align-self: flex-end;
+  text-align: right;
+  max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Input Area */
+.chat-input-area {
+  display: flex;
+  padding: 15px;
+  background: white;
+  border-top: 2px solid #eee;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  gap: 10px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+}
+
+.chat-input-area input:focus {
+  border-color: #22c55e;
+}
+
+.chat-input-area button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.chat-input-area button:hover {
+  background: #16a34a;
+}
+
+/* 1. Fix the Stats Board positioning */
+.stats-board {
+  position: absolute; /* Keeps it in one spot regardless of content */
+  top: 100px; /* Moves it below the nav bar */
+  left: 30px; /* Anchors it to the left side */
+
+  width: 220px; /* Gives it a set width so it doesn't stretch */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* White background with slight transparency */
+
+  padding: 20px;
+  border-radius: 20px;
+  border: 4px solid #22c55e; /* Green border to match your theme */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+  z-index: 100; /* Ensures it stays above the background image */
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+/* 2. Style the text inside the board */
+.stats-board h3 {
+  margin-top: 0;
+  color: #166534;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+.stats-board p {
+  margin: 10px 0;
+  color: #14532d;
+  font-size: 1.1rem;
+}
+
+.stats-board hr {
+  border: none;
+  border-top: 2px dashed #22c55e;
+  margin: 15px 0;
+}
+
+/* 3. Shift the Hub title so it doesn't hide behind the board */
+.main-content {
+  margin-left: 280px; /* Gives space for the board on the left */
+  text-align: center;
+}
