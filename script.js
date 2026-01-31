@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. Setup API (Using Gemini 2.0 Flash)
-const API_KEY = "AIzaSyBWcNu995ZmMaAa_rEiHQss2lVXHWaxmQk";
+const API_KEY = "AIzaSyAoygtUD9yWAcSaIrv4ExtgdT44zuvbfaQ";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 2. Game State
@@ -54,7 +54,9 @@ async function explainNextJar() {
     const result = await model.generateContent(`Explain the ${jarId} jar.`);
     document.getElementById(loadingId).innerText = result.response.text();
   } catch (e) {
-    document.getElementById(loadingId).innerText = "Type YES to move on! 🐷";
+    console.error("DEBUG ERROR:", e); // Look at your F12 Console!
+    document.getElementById(loadingId).innerText =
+      "I'm a bit sleepy! Type YES to move on! 🐷";
   }
 }
 
