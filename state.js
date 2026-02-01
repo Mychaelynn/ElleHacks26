@@ -1,6 +1,7 @@
 // state.js
 export const STORAGE_KEY = "finalBalances";
 
+//json converts to object
 export function getBalances() {
   const saved = localStorage.getItem(STORAGE_KEY);
   return saved
@@ -10,7 +11,7 @@ export function getBalances() {
 
 export function saveBalances(balances) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(balances));
-  // Dispatch a custom event so other parts of the page know to update
+  // custome event so other pages know to change
   window.dispatchEvent(new Event("balanceUpdate"));
 }
 

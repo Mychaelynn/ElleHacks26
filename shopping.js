@@ -2,20 +2,17 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getBalances, saveBalances, updateUI } from "./state.js";
 
-const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
+const API_KEY = "AIzaSyBDpA_DWav4UW2cWPdgK9RQ8THShposT40";
 const genAI = new GoogleGenerativeAI(API_KEY);
-
-// Audio for the Gatcha prize
-const gatchaSound = new Audio("gachaVid.mp3");
 
 let currentPurchase = null; // Store pending purchase info
 
-// 1. AI-Powered Purchase Logic
+// purchase
 window.buyItem = async function (name, cost, action) {
   let balances = getBalances();
 
+  // if users spendings is less than price
   if (balances.spendings < cost) {
-    // Open Penny's chat and show error
     openPennyChat();
     addMessage(
       `Oh no! You only have $${balances.spendings} in Spendings, but you need $${cost}! Maybe earn more coins first? 🐷`,
@@ -24,13 +21,11 @@ window.buyItem = async function (name, cost, action) {
     return;
   }
 
-  // Store purchase details
   currentPurchase = { name, cost, action };
 
-  // Open Penny's chat
   openPennyChat();
 
-  // Let AI decide how to respond based on financial situation
+  // let gemini respond based on details below
   try {
     const goalName = localStorage.getItem("targetGoal") || "your goal";
     const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
@@ -66,9 +61,10 @@ Keep it friendly, age-appropriate, and teaching them about balance - not just al
 
     const aiResponse = result.response.text();
     addMessage(aiResponse, "penny-msg");
+    // if ai fails give default message
   } catch (error) {
     console.error("AI Error:", error);
-    // Fallback if AI fails - still follows the pattern
+
     addMessage(`Thinking about "${name}" for $${cost}... 🤔`, "penny-msg");
     addMessage(
       `You have $${balances.spendings} in Spendings right now. If you buy this for $${cost}, how much will you have left?`,
@@ -82,7 +78,7 @@ Keep it friendly, age-appropriate, and teaching them about balance - not just al
 
   // Focus the input
   const inputField = document.getElementById("user-query");
-  if (inputField) inputField.focus();
+  if (inputField) inputField.focus(); // puts cursoe inside input field ready to type
 };
 
 window.closeVideo = function () {
@@ -94,16 +90,16 @@ window.closeVideo = function () {
 };
 
 function openPennyChat() {
-  const win = document.getElementById("penny-chat-window");
-  if (win) {
-    win.classList.remove("chat-hidden");
+  const windo = document.getElementById("penny-chat-window");
+  if (windo) {
+    windo.classList.remove("chat-hidden");
   }
 }
 
 function togglePennyChat() {
-  const win = document.getElementById("penny-chat-window");
-  if (win) {
-    win.classList.toggle("chat-hidden");
+  const windo = document.getElementById("penny-chat-window");
+  if (windo) {
+    windo.classList.toggle("chat-hidden");
   }
 }
 
@@ -122,7 +118,6 @@ function completePurchase() {
   const { name, cost, action } = currentPurchase;
   let balances = getBalances();
 
-  // Deduct money
   balances.spendings -= cost;
   saveBalances(balances);
   updateUI();
@@ -175,12 +170,12 @@ async function sendToGemini() {
   addMessage(userText, "user-msg");
   inputField.value = "";
 
-  // Check if we're waiting for a math answer
+  // check if purchase, do math
   if (currentPurchase) {
     const balances = getBalances();
     const correctAnswer = balances.spendings - currentPurchase.cost;
 
-    // Check if user wants to cancel
+    // cjecl if user cancel
     if (
       userText.toLowerCase() === "cancel" ||
       userText.toLowerCase() === "no"
@@ -234,7 +229,7 @@ async function sendToGemini() {
   }
 }
 
-// 2. Initialization
+// Dom is bridge from JS to HTML -- when make changes to html text this does it
 window.addEventListener("DOMContentLoaded", () => {
   updateUI();
 

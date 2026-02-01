@@ -1,7 +1,7 @@
 import { getBalances, updateUI } from "./state.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
+const API_KEY = "AIzaSyBDpA_DWav4UW2cWPdgK9RQ8THShposT40";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. Initialization
@@ -109,7 +109,6 @@ function addMessage(text, className) {
   chatMessages.innerHTML += `<p class="${className}">${text}</p>`;
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
 
 window.sendToGemini = async function () {
   const inputField = document.getElementById("user-query");

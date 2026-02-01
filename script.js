@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 //api
-const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
+const API_KEY = "AIzaSyBDpA_DWav4UW2cWPdgK9RQ8THShposT40";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 let currentStep = 0;
@@ -27,7 +27,7 @@ async function initJarPage() {
   }
 }
 
-//tour
+//explaining the different money jars
 async function explainNextJar() {
   const age = localStorage.getItem("playerAge") || "7";
   const loadingId = "loading-" + Date.now();
@@ -49,7 +49,7 @@ async function explainNextJar() {
       currentStep++;
     } catch (e) {
       document.getElementById(loadingId).innerText =
-        "Great job learning the jars! Now, split your $50 to start your adventure. Type YES to begin! 🐷";
+        "Great job learning the jars! Now, split your $50 to start your adventure. Click a jar to add money to it! ";
       currentStep++;
     }
     return;
@@ -73,7 +73,6 @@ async function explainNextJar() {
     return;
   }
 
-
   ///different jars
   const jarId = steps[currentStep];
   highlightJar(jarId);
@@ -91,7 +90,7 @@ async function explainNextJar() {
   }
 }
 
- //miney allocaitn
+//miney allocaitn
 function allocateMoney(jarType) {
   if (currentStep < steps.length) return;
 
@@ -105,7 +104,7 @@ function allocateMoney(jarType) {
     return;
   }
 
-  // cant put moer than half in spendings
+  // cant put moer than half in spendings == wimll prompt to nudge user about finaincal choice
   if (jarType === "spendings" && balances.spendings + amount > 25) {
     needsRatioLesson = true;
     pendingAmount = amount;
@@ -113,7 +112,7 @@ function allocateMoney(jarType) {
 
     addMessage(`Wait! $${amount} is a lot for just Spendings!`, "user-msg");
     addMessage(
-      "Spending too much now means less for your goals later. Have you heard of the 50/30/20 rule? 50% should be for needs, not just treats! Do you want to reconsider or try anyway? (Type RECONSIDER or TRY)",
+      "Spending too much now means less for your goals later. Have you heard of the 50/30/20 rule? 50% should be for needs, not just treats! Do you want to reconsider or try anyway? ",
       "penny-msg",
     );
     return;
@@ -185,9 +184,16 @@ async function sendToGemini() {
 
   // regular AI Chat
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: `You are Penny, a friendly piggy bank assistant helping kids make smart spending decisions.
+keep advice and tips to 3-4 sentences, ending with asking the user if they want like any clarification.
+If user asks about advice on which jar to put money into, tell them what the ratio should be and explain why`,
+    });
     const result = await model.generateContent(userText);
-    addMessage(result.response.text(), "penny-msg");
+
+    const aiResponse = result.response.text();
+    addMessage(aiResponse, "penny-msg");
   } catch (error) {
     addMessage("Oops! Try again? 🐷", "penny-msg");
   }
@@ -199,6 +205,7 @@ function saveAgeAndGo() {
     alert("Please enter your age!");
     return;
   }
+  // after age inputted move onto choozing prize
   localStorage.setItem("playerAge", age);
   window.location.href = "chosePrize.html";
 }

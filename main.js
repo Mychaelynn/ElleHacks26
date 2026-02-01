@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { updateUI, getBalances, saveBalances } from "./state.js";
 
-const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
+const API_KEY = "AIzaSyBDpA_DWav4UW2cWPdgK9RQ8THShposT40";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const UMBRELLA_COST = 10;
@@ -42,7 +42,7 @@ async function handleRainyDay() {
     // Not enough in rainy day fund
     let remaining = UMBRELLA_COST - balances.rainyDay;
     usedFromRainyDay = balances.rainyDay;
-    balances.rainyDay = 0; 
+    balances.rainyDay = 0;
 
     // Double cost when taking from savings (penalty for no rainy day fund)
     remaining = remaining * 2;
@@ -71,7 +71,7 @@ async function handleRainyDay() {
         usedFromSpendings = balances.spendings;
         remaining -= balances.spendings;
         balances.spendings = 0;
-        balances.savings = -remaining; 
+        balances.savings = -remaining;
         debtAmount = remaining;
 
         saveBalances(balances);

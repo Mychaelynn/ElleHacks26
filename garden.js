@@ -2,7 +2,7 @@ import { getBalances, saveBalances, updateUI } from "./state.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // api
-const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
+const API_KEY = "AIzaSyBDpA_DWav4UW2cWPdgK9RQ8THShposT40";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 let growthInterval = null;
