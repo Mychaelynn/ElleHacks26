@@ -1,46 +1,22 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { updateUI } from "./state.js";
 
-// 1. Setup API (Using Gemini 2.0 Flash)
-const API_KEY = "AIzaSyAoygtUD9yWAcSaIrv4ExtgdT44zuvbfaQ";
+// 1. Setup API
+const API_KEY = "AIzaSyB6bhitVPviniMCIDTr3KZcoMCDgysLEqs";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// 2. Dashboard Logic: Reads from your "notebook" (localStorage)
-function updateDashboard() {
-  const rawBalances = localStorage.getItem("finalBalances");
-  const balances = rawBalances
-    ? JSON.parse(rawBalances)
-    : { wallet: 0, spendings: 0, savings: 0, rainyDay: 0 };
-
-  const goalName = localStorage.getItem("targetGoal") || "Prize";
-  const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
-
-  // Calculate remaining: Item Price - Savings
-  const amountNeeded = Math.max(0, targetPrice - balances.savings);
-
-  // Update UI elements if they exist on the page
-  if (document.getElementById("stat-wallet")) {
-    document.getElementById("stat-wallet").innerText = balances.wallet;
-    document.getElementById("stat-spendings").innerText = balances.spendings;
-    document.getElementById("stat-savings").innerText = balances.savings;
-    document.getElementById("stat-rainyDay").innerText = balances.rainyDay;
-    document.getElementById("stat-goal-name").innerText = goalName;
-    document.getElementById("stat-needed").innerText = amountNeeded;
-  }
-
-  return { balances, goalName, amountNeeded };
-}
-
-// 3. Main Hub Initialization
+// 2. Main Hub Initialization
 async function initMainHub() {
-  // Only run this if we are on the main hub page
-  if (document.querySelector(".game-nav")) {
+  const nav = document.querySelector(".game-nav");
+  if (nav) {
     const age = localStorage.getItem("playerAge") || "7";
 
-    // Update the numbers and prize name immediately
-    const { goalName, amountNeeded } = updateDashboard();
+    // Sync the dashboard
+    const { goalName, amountNeeded } = updateUI();
 
-    // Open Penny's chat window to greet the user
-    togglePennyChat();
+    // Open the chat window for the intro
+    const win = document.getElementById("penny-chat-window");
+    if (win) win.classList.remove("chat-hidden");
 
     addMessage(
       `Hi! Welcome to the Hub! You still need $${amountNeeded} for your ${goalName}! 💭`,
@@ -51,12 +27,8 @@ async function initMainHub() {
       const model = genAI.getGenerativeModel({
         model: "gemini-2.0-flash",
         systemInstruction: `You are Penny, a friendly piggy bank mascot. Explain these 4 places to a ${age} year old: 
-        1. Shopping, 2. Garden, 3. Chores, 4. Bank.
-        
-        STRICT FORMATTING RULES:
-        - Write exactly ONE short sentence per place.
-        - Use TWO newlines between every single place.
-        - Start each line with the name of the place in bold.`,
+                1. Shopping, 2. Garden, 3. Chores, 4. Bank.
+                STRICT FORMATTING: One short sentence per place. Two newlines between places. Start with the name in bold.`,
       });
 
       const result = await model.generateContent(
@@ -72,7 +44,7 @@ async function initMainHub() {
   }
 }
 
-// 4. Gemini Chat Function: Handles regular user questions
+// 3. UI Helpers & Gemini Logic
 async function sendToGemini() {
   const inputField = document.getElementById("user-query");
   const userText = inputField.value.trim();
@@ -94,14 +66,10 @@ async function sendToGemini() {
   }
 }
 
-// 5. UI Helper Functions
 function addMessage(text, className) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
-
-  // Ensure the container respects the \n\n from Gemini
   chatMessages.style.whiteSpace = "pre-line";
-
   chatMessages.innerHTML += `<p class="${className}">${text}</p>`;
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -111,7 +79,19 @@ function togglePennyChat() {
   if (win) win.classList.toggle("chat-hidden");
 }
 
-// 6. Global Exports (Required for Module type)
-window.onload = initMainHub;
+function applyGlobalSettings() {
+  const cursorStatus = localStorage.getItem("customCursor");
+  if (cursorStatus === "active") {
+    document.body.classList.add("custom-cursor-active");
+  }
+}
+
+// 4. Unified Initialization
+window.addEventListener("DOMContentLoaded", () => {
+  applyGlobalSettings();
+  initMainHub();
+});
+
+// 5. Global Exports
 window.togglePennyChat = togglePennyChat;
 window.sendToGemini = sendToGemini;

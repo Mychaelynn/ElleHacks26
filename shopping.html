@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Penny's Shop - Spend or Save?</title>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="shopping.css" />
+    <style>
+      /* Style for the video overlay */
+      #video-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      #gacha-video {
+        max-width: 80%;
+        max-height: 80%;
+        border: 5px solid #22c55e;
+        border-radius: 20px;
+      }
+
+      .close-video-btn {
+        margin-top: 20px;
+        padding: 10px 30px;
+        background: #e11d48;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="setup-bg">
+    <nav class="game-nav">
+      <a href="main.html" class="nav-item">🏠 Adventure Hub</a>
+      <a href="garden.html" class="nav-item">🌻 Garden</a>
+      <a href="chores.html" class="nav-item">🧹 Chores</a>
+      <a href="bank.html" class="nav-item">🏦 Bank</a>
+    </nav>
+    <div id="penny-container" onclick="togglePennyChat()">
+      <img src="mascot.png" id="penny-icon" alt="Penny" />
+      <p style="margin: 0; font-weight: bold; color: #166534">Help?</p>
+    </div>
+
+    <div id="penny-chat-window" class="chat-window chat-hidden">
+      <div id="chat-messages">
+        <p class="penny-msg">
+          Welcome to the shop! Want to buy something cool? 🐷
+        </p>
+      </div>
+      <div class="chat-input-area">
+        <input
+          type="text"
+          id="user-query"
+          placeholder="Ask Penny..."
+          onkeypress="if (event.key === 'Enter') sendToGemini();"
+        />
+        <button class="send-btn" onclick="sendToGemini()">Send</button>
+      </div>
+    </div>
+
+    <div class="stats-board">
+      <h3>Your Progress</h3>
+      <p>Wallet: $<span id="stat-wallet">0</span></p>
+      <hr />
+      <p><strong>Goal:</strong> <span id="stat-goal-name">Loading...</span></p>
+      <p><strong>Still Need:</strong> $<span id="stat-needed">0</span></p>
+      <hr />
+      <p>Spendings: $<span id="stat-spendings">0</span></p>
+      <p>Savings: $<span id="stat-savings">0</span></p>
+      <p>Rainy Day: $<span id="stat-rainyDay">0</span></p>
+    </div>
+
+    <div class="main-content">
+      <h1>The Arcade & Gift Shop</h1>
+      <p>Will you spend your coins or save for your goal?</p>
+
+      <div class="shop-grid">
+        <div
+          class="shop-card"
+          onclick="buyItem('Gatcha Play', 5, 'playGatcha')"
+        >
+          <div class="image-wrapper">
+            <img src="shopping/gacha.png" alt="Gatcha Machine" />
+          </div>
+          <h3>Gatcha Prize</h3>
+          <p class="price">$5</p>
+          <button class="buy-btn">Play!</button>
+        </div>
+
+        <div class="shop-card" onclick="buyItem('GoldChain', 15, 'equipChain')">
+          <div class="image-wrapper">
+            <img src="shopping/gold.png" alt="GoldChain" />
+          </div>
+          <h3>WealthSimple Gold Chain</h3>
+          <p class="price">$15</p>
+          <button class="buy-btn">Buy WealthSimple Gold Chain</button>
+        </div>
+
+        <div class="shop-card" onclick="buyItem('Snake Game', 2, 'playSnake')">
+          <div class="image-wrapper">
+            <img src="shopping/snake.png" alt="Snake Game" />
+          </div>
+          <h3>Play Snake</h3>
+          <p class="price">$2</p>
+          <button class="buy-btn">Play Game</button>
+        </div>
+
+        <div
+          class="shop-card"
+          onclick="buyItem('Magic Cursor', 10, 'unlockCursor')"
+        >
+          <div class="image-wrapper">
+            <img src="shopping/cursorTogether.png" alt="Custom Cursor" />
+          </div>
+          <h3>Magic Cursor</h3>
+          <p class="price">$10</p>
+          <button class="buy-btn">Unlock</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="video-overlay">
+      <video id="gacha-video">
+        <source src="shopping/gacha.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <button class="close-video-btn" onclick="closeVideo()">
+        Close Video
+      </button>
+    </div>
+
+    <script type="module" src="shopping.js"></script>
+  </body>
+</html>

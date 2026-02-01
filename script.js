@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. Setup API (Using Gemini 2.0 Flash)
-const API_KEY = "AIzaSyAoygtUD9yWAcSaIrv4ExtgdT44zuvbfaQ";
+const API_KEY = "AIzaSyB6bhitVPviniMCIDTr3KZcoMCDgysLEqs";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 2. Game State
@@ -220,34 +220,34 @@ function selectGoal(name, price) {
 }
 
 function updateDashboard() {
-  // --- DEBUG CHECK: Add this to see what's actually in your storage ---
-  console.log("Goal in Storage:", localStorage.getItem("targetGoal"));
-  console.log("Price in Storage:", localStorage.getItem("targetPrice"));
-  // 1. Get the current jar balances
-  document.getElementById("stat-wallet").innerText = balances.wallet;
-  document.getElementById("stat-spendings").innerText = balances.spendings;
-  document.getElementById("stat-savings").innerText = balances.savings;
-  document.getElementById("stat-rainyDay").innerText = balances.rainyDay;
-
-  // 2. Fetch the prize info you picked in chosePrize.html
-  // Use the exact keys you used in selectGoal()
+  // 1. Fetch Prize Info from storage
   const goalName = localStorage.getItem("targetGoal") || "Prize";
   const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
-
-  // 3. The Math: Item Price - Savings
   const amountNeeded = Math.max(0, targetPrice - balances.savings);
 
-  // 4. Update the display elements
-  const goalNameEl = document.getElementById("stat-goal-name");
-  const neededEl = document.getElementById("stat-needed");
+  // 2. Create the Unified Mapping
+  // This connects your logic variables to your HTML IDs
+  const mapping = {
+    "stat-wallet": balances.wallet,
+    "stat-spendings": balances.spendings,
+    "stat-savings": balances.savings,
+    "stat-rainyDay": balances.rainyDay,
+    "stat-goal-name": goalName,
+    "stat-needed": amountNeeded,
+  };
 
-  if (goalNameEl) goalNameEl.innerText = goalName;
-  if (neededEl) neededEl.innerText = amountNeeded;
+  // 3. Loop and Update UI
+  Object.entries(mapping).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.innerText = value;
+    }
+  });
 
-  // 5. Save the balances for the next page
+  // 4. Persistence: Save the 'notebook' for other pages
   localStorage.setItem("finalBalances", JSON.stringify(balances));
 
-  // Check if wallet is finished
+  // 5. Navigation Logic
   if (balances.wallet === 0 && pendingAmount === 0) {
     addMessage(
       `Great! You still need $${amountNeeded} for your ${goalName}. Let's go! 🏰`,

@@ -247,3 +247,20 @@
   margin-left: 280px; /* Gives space for the board on the left */
   text-align: center;
 }
+
+/* This works on every page that links to main.css */
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor:
+    url("shopping/noHover-removebg-preview.png") 0 0,
+    auto !important;
+}
+
+body.custom-cursor-active a:hover,
+body.custom-cursor-active button:hover,
+body.custom-cursor-active .shop-card:hover,
+body.custom-cursor-active .nav-item:hover {
+  cursor:
+    url("shopping/Hover-removebg-preview.png") 0 0,
+    pointer !important;
+}
