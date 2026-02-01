@@ -48,7 +48,7 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
     alert("Goal achieved! Redirecting...");
 
     if (goal.includes("disney")) {
-      window.location.href = "disney.html";
+      window.location.href = "disneyPrize.html";
     } else if (goal.includes("niagara")) {
       window.location.href = "niagara.html";
     } else {
