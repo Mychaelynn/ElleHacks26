@@ -171,11 +171,9 @@ const placeCharacter = () => {
 
 const step = () => { placeCharacter(); checkProximity(); window.requestAnimationFrame(step); }
 
-// Initialize
-updateStatsBoard(); // Load stats on start
+updateStatsBoard(); 
 step(); 
 
-// CONTROLS
 document.addEventListener("keydown", (e) => {
      if (activeItem && !cleanPrompt.classList.contains("hidden") && (e.code === "KeyE" || e.key === "e")) {
         activeItem.cleaned = true;
@@ -197,7 +195,7 @@ document.addEventListener("keyup", (e) => {
      if (index > -1) held_directions.splice(index, 1);
 });
 
-// D-PAD Controls
+//d-pad
 var isPressed = false;
 const removePressedAll = () => {
    document.querySelectorAll(".dpad-button").forEach(d => {
