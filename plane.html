@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket Counter - Penny's Adventure</title>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="plane.css" />
+  </head>
+  <body class="setup-bg">
+    <nav class="game-nav">
+      <a href="main.html" class="nav-item">🏠 Adventure Hub</a>
+      <a href="shopping.html" class="nav-item">🛍️ Shop & Arcade</a>
+      <a href="chores.html" class="nav-item">🏠 Chores</a>
+      <a href="bank.html" class="nav-item">🏦 Bank</a>
+    </nav>
+
+    <div id="penny-container" onclick="togglePennyChat()">
+      <img src="mascot.png" id="penny-icon" alt="Penny" />
+      <p style="margin: 0; font-weight: bold; color: #166534">Help?</p>
+    </div>
+
+    <div id="penny-chat-window" class="chat-window chat-hidden">
+      <div id="chat-messages">
+        <p class="penny-msg">
+          Ready for your big trip? Check if you have enough saved up! 🐷✈️
+        </p>
+      </div>
+      <div class="chat-input-area">
+        <input
+          type="text"
+          id="user-query"
+          placeholder="Ask Penny..."
+          onkeypress="if (event.key === 'Enter') sendToGemini();"
+        />
+        <button class="send-btn" onclick="sendToGemini()">Send</button>
+      </div>
+    </div>
+
+    <div class="stats-board">
+      <h3>Your Progress</h3>
+      <p>Wallet: $<span id="stat-wallet">0</span></p>
+      <hr />
+      <p><strong>Goal:</strong> <span id="stat-goal-name">Loading...</span></p>
+      <p><strong>Still Need:</strong> $<span id="stat-needed">0</span></p>
+      <hr />
+      <p>Spendings: $<span id="stat-spendings">0</span></p>
+      <p>Savings: $<span id="stat-savings">0</span></p>
+      <p>Rainy Day: $<span id="stat-rainyDay">0</span></p>
+    </div>
+
+    <div class="main-content">
+      <div class="ticket-booth">
+        <h1 id="current-goal-title">Flight to ...</h1>
+        <div class="ticket-graphic">
+          <p>Official Boarding Pass</p>
+          <h2 id="destination-text">Checking Destination...</h2>
+        </div>
+        <button id="buy-ticket-btn" class="buy-btn">🎟️ Purchase Ticket!</button>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module" src="plane.js"></script>
+  </body>
+</html>
