@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. Setup API (Using Gemini 2.0 Flash)
-const API_KEY = "AIzaSyB6bhitVPviniMCIDTr3KZcoMCDgysLEqs";
+const API_KEY = "AIzaSyBRYviZiVdBHWnyf4K_lcaUBCrEVvleQk4";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 2. Game State
@@ -33,18 +33,55 @@ async function initJarPage() {
 // 4. Guided Tour
 async function explainNextJar() {
   const age = localStorage.getItem("playerAge") || "7";
-  if (currentStep >= steps.length) {
-    addMessage(
-      "You're a pro! You have $50. Click a jar to add money! 💰",
-      "penny-msg",
-    );
+  const loadingId = "loading-" + Date.now();
+
+  // 1. TOUR COMPLETE: Explain the overall Game Rules first
+  if (currentStep === steps.length) {
+    addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash",
+        systemInstruction: `You are Penny. The jar tour is over. Now explain the 3 main rules of the game to a ${age} year old:
+        1. You have $50 to split between these jars. 
+        2. Spendings is for the Shop, Savings is for your ${localStorage.getItem("targetGoal") || "trip"}, and Rainy Day is for emergencies.
+        3. Once your wallet is empty, you'll go to the Hub to earn more!
+        Keep it very simple. End with 'Click a jar to add money to it!'`,
+      });
+      const result = await model.generateContent("Explain the game rules.");
+      document.getElementById(loadingId).innerText = result.response.text();
+
+      // Increment so the NEXT 'YES' triggers the "You are a pro" message
+      currentStep++;
+    } catch (e) {
+      document.getElementById(loadingId).innerText =
+        "Great job learning the jars! Now, split your $50 to start your adventure. Type YES to begin! 🐷";
+      currentStep++;
+    }
+    return;
+  }
+
+  // 2. FINAL STATE: "You are a pro"
+  if (currentStep > steps.length) {
+    addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash",
+        systemInstruction: `You are Penny. Tell the user: 'You're a pro! You have $50. Click a jar to add money! 💰' and give them one last encouraging boost.`,
+      });
+      const result = await model.generateContent("Final encouragement.");
+      document.getElementById(loadingId).innerText = result.response.text();
+    } catch (e) {
+      document.getElementById(loadingId).innerText =
+        "You're a pro! You have $50. Click a jar to add money! 💰";
+    }
     resetJars();
     updateDashboard();
     return;
   }
+
+  // 3. INDIVIDUAL JAR TOUR (Steps 0, 1, 2)
   const jarId = steps[currentStep];
   highlightJar(jarId);
-  const loadingId = "loading-" + Date.now();
   addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
   try {
     const model = genAI.getGenerativeModel({
@@ -54,7 +91,6 @@ async function explainNextJar() {
     const result = await model.generateContent(`Explain the ${jarId} jar.`);
     document.getElementById(loadingId).innerText = result.response.text();
   } catch (e) {
-    console.error("DEBUG ERROR:", e); // Look at your F12 Console!
     document.getElementById(loadingId).innerText =
       "I'm a bit sleepy! Type YES to move on! 🐷";
   }

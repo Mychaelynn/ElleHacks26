@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Penny's Garden</title>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="garden.css" />
+  </head>
+  <
+  <body class="garden-bg">
+    <nav class="game-nav">
+      <a href="shopping.html" class="nav-item">🛍️ Shopping & Arcade</a>
+      <a href="garden.html" class="nav-item">🌻 Garden</a>
+      <a href="chores.html" class="nav-item">🧹 Chores</a>
+      <a href="plane.html" class="nav-item">✈️ Purchase Ticket </a>
+    </nav>
+
+    <div class="stats-board">
+      <h3>Your Progress</h3>
+      <p>Wallet: $<span id="stat-wallet">0</span></p>
+      <hr />
+      <p><strong>Goal:</strong> <span id="stat-goal-name">Loading...</span></p>
+      <p><strong>Still Need:</strong> $<span id="stat-needed">0</span></p>
+      <hr />
+      <p>Spendings: $<span id="stat-spendings">0</span></p>
+      <p>Savings: $<span id="stat-savings">0</span></p>
+      <p>Rainy Day: $<span id="stat-rainyDay">0</span></p>
+    </div>
+
+    <div class="main-content">
+      <h1 class="garden-title">Sunflower Garden</h1>
+      <div id="penny-container" onclick="togglePennyChat()">
+        <img src="mascot.png" id="penny-icon" alt="Penny" />
+        <p style="margin: 0; font-weight: bold; color: #166534">
+          Investment Tip?
+        </p>
+      </div>
+
+      <div id="penny-chat-window" class="chat-window chat-hidden">
+        <div class="chat-header">
+          <span>Penny's Tips 🐷</span>
+          <button class="close-chat" onclick="togglePennyChat()">×</button>
+        </div>
+
+        <div id="chat-messages"></div>
+
+        <div class="chat-input-area">
+          <input
+            type="text"
+            id="user-query"
+            placeholder="Ask Penny about growing money..."
+            onkeypress="if (event.key === 'Enter') sendToGemini();"
+          />
+          <button class="send-btn" onclick="sendToGemini()">Send</button>
+        </div>
+      </div>
+      <div id="garden-status">The garden is empty. Buy seeds to start!</div>
+
+      <div class="garden-actions">
+        <button id="buy-seeds-btn" class="garden-buy-btn" onclick="buySeeds()">
+          Buy Seeds ($30)
+        </button>
+        <button
+          id="stop-garden-btn"
+          class="garden-buy-btn hidden"
+          onclick="stopGarden()"
+        >
+          Harvest & Stop
+        </button>
+      </div>
+
+      <div id="earnings-display" class="hidden">
+        Current Earnings: $<span id="current-session-cash">0</span>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module" src="garden.js"></script>
+  </body>
+</html>

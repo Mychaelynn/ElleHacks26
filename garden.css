@@ -1,0 +1,249 @@
+/* 1. Global Page Reset & Background */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Removes scrollbars for a clean game look */
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.garden-bg {
+  background-image: url("garden.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 2. Top Navigation Bar */
+.game-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 5px solid #22c55e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #166534;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  background: white;
+  border: 3px solid #22c55e;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  transform: translateY(-3px);
+  background: #dcfce7;
+}
+
+/* 3. Stats Board (Anchored to Top-Left) */
+.stats-board {
+  position: absolute;
+  top: 100px; /* Sits below the Nav Bar */
+  left: 30px;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 20px;
+  border: 4px solid #22c55e;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.stats-board h3 {
+  margin-top: 0;
+  color: #166534;
+  text-align: center;
+}
+.stats-board hr {
+  border: none;
+  border-top: 2px dashed #22c55e;
+  margin: 15px 0;
+}
+
+/* 4. Main Garden Content */
+.main-content {
+  margin-left: 280px; /* Offsets content to avoid overlapping the Stats Board */
+  height: calc(100vh - 70px);
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.garden-title {
+  font-size: 3.5rem;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+}
+
+#garden-status {
+  font-size: 1.6rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 15px 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  max-width: 600px;
+  font-weight: bold;
+}
+
+.garden-buy-btn {
+  background-color: #22c55e;
+  color: white;
+  border: 4px solid #ffffff;
+  padding: 20px 45px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.garden-buy-btn:hover {
+  transform: scale(1.1);
+  background-color: #16a34a;
+}
+
+#earnings-display {
+  margin-top: 20px;
+  background: #22c55e;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+/* 5. Penny Chat UI (Bottom Right) */
+#penny-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2000;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+#penny-container:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+#penny-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 5px solid #22c55e;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.chat-window {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  width: 340px;
+  height: 480px;
+  background: white;
+  border: 4px solid #22c55e;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.chat-header {
+  background: #22c55e;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+#chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fffb;
+}
+
+.penny-msg {
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px;
+  border-radius: 15px 15px 15px 5px;
+  align-self: flex-start;
+  max-width: 80%;
+}
+
+.user-msg {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 12px;
+  border-radius: 15px 15px 5px 15px;
+  align-self: flex-end;
+  max-width: 80%;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 15px;
+  gap: 10px;
+  border-top: 2px solid #eee;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+}
+.chat-input-area button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* 6. Utility & Custom Cursor */
+.hidden {
+  display: none !important;
+}
+
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor:
+    url("shopping/noHover-removebg-preview.png") 0 0,
+    auto !important;
+}
