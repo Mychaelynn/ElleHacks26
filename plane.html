@@ -9,33 +9,11 @@
   </head>
   <body class="setup-bg">
     <nav class="game-nav">
+      <a href="main.html" class="nav-item">🏠 Adventure Hub</a>
       <a href="shopping.html" class="nav-item">🛍️ Shopping & Arcade</a>
       <a href="garden.html" class="nav-item">🌻 Garden</a>
       <a href="chores.html" class="nav-item">🧹 Chores</a>
-      <a href="plane.html" class="nav-item">✈️ Purchase Ticket </a>
     </nav>
-
-    <div id="penny-container" onclick="togglePennyChat()">
-      <img src="mascot.png" id="penny-icon" alt="Penny" />
-      <p style="margin: 0; font-weight: bold; color: #166534">Help?</p>
-    </div>
-
-    <div id="penny-chat-window" class="chat-window chat-hidden">
-      <div id="chat-messages">
-        <p class="penny-msg">
-          Ready for your big trip? Check if you have enough saved up! 🐷✈️
-        </p>
-      </div>
-      <div class="chat-input-area">
-        <input
-          type="text"
-          id="user-query"
-          placeholder="Ask Penny..."
-          onkeypress="if (event.key === 'Enter') sendToGemini();"
-        />
-        <button class="send-btn" onclick="sendToGemini()">Send</button>
-      </div>
-    </div>
 
     <div class="stats-board">
       <h3>Your Progress</h3>
@@ -56,6 +34,30 @@
           <h2 id="destination-text">Checking Destination...</h2>
         </div>
         <button id="buy-ticket-btn" class="buy-btn">🎟️ Purchase Ticket!</button>
+      </div>
+    </div>
+
+    <!-- Penny Chat (Bottom Right Corner) -->
+    <div class="penny-fixed-corner" onclick="togglePennyChat()">
+      <img src="mascot.png" alt="Penny" id="penny-icon" />
+    </div>
+
+    <div id="penny-chat-window" class="chat-hidden">
+      <div class="chat-header">
+        <span>Penny's Tips 🐷</span>
+        <button onclick="togglePennyChat()" class="close-chat">×</button>
+      </div>
+
+      <div id="chat-messages"></div>
+
+      <div class="chat-input-area">
+        <input
+          type="text"
+          id="user-query"
+          placeholder="Ask Penny..."
+          onkeypress="if (event.key === 'Enter') sendToGemini();"
+        />
+        <button onclick="sendToGemini()">Send</button>
       </div>
     </div>
 

@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. Setup API (Using Gemini 2.0 Flash)
-const API_KEY = "AIzaSyBRYviZiVdBHWnyf4K_lcaUBCrEVvleQk4";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 2. Game State

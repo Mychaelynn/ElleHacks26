@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getBalances, saveBalances, updateUI } from "./state.js";
 
-const API_KEY = "AIzaSyDk3isNLBDgRkx10pgPhblPrZcKX8_sT5E";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Audio for the Gatcha prize
@@ -10,7 +10,7 @@ const gatchaSound = new Audio("gachaVid.mp3");
 
 let currentPurchase = null; // Store pending purchase info
 
-// 1. Unified Purchase Logic with Penny's Question
+// 1. AI-Powered Purchase Logic
 window.buyItem = async function (name, cost, action) {
   let balances = getBalances();
 
@@ -27,24 +27,58 @@ window.buyItem = async function (name, cost, action) {
   // Store purchase details
   currentPurchase = { name, cost, action };
 
-  // Open Penny's chat and ask the question
+  // Open Penny's chat
   openPennyChat();
 
-  // Penny questions if it's wise
-  addMessage(
-    `Hmm... are you sure you want to spend $${cost} on "${name}"? 🤔`,
-    "penny-msg",
-  );
+  // Let AI decide how to respond based on financial situation
+  try {
+    const goalName = localStorage.getItem("targetGoal") || "your goal";
+    const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
+    const amountNeeded = Math.max(0, targetPrice - balances.savings);
 
-  addMessage(
-    `Let me ask you this: You have $${balances.spendings} in Spendings right now. If you buy this for $${cost}, how much will you have left? 💭`,
-    "penny-msg",
-  );
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: `You are Penny, a friendly piggy bank assistant helping kids make smart spending decisions.
 
-  addMessage(
-    `Type your answer below! (Or type "cancel" to change your mind)`,
-    "penny-msg",
-  );
+CONTEXT:
+- Item: "${name}" costs $${cost}
+- Spendings: $${balances.spendings}
+- Savings: $${balances.savings} (needs $${amountNeeded} more for ${goalName})
+- Rainy Day: $${balances.rainyDay}
+
+DECISION RULES:
+1. If this is a small purchase (under $5) and they have plenty of spendings (over $20), be encouraging and supportive! It's okay to spend sometimes.
+2. If this is expensive ($10+) relative to their spendings, gently question if it's wise and make them think about it.
+3. If their savings are low and they're close to their goal, remind them about their goal.
+4. Always consider the balance between all three categories.
+
+YOUR RESPONSE:
+- First, give your quick opinion (1-2 sentences) on whether this purchase is smart based on their financial situation.
+- Then ALWAYS ask them this math question: "You have $${balances.spendings} in Spendings right now. If you buy this for $${cost}, how much will you have left?"
+- End with: "Type your answer below! (Or type 'cancel' to change your mind)"
+
+Keep it friendly, age-appropriate, and teaching them about balance - not just always saving!`,
+    });
+
+    const result = await model.generateContent(
+      `The user wants to buy "${name}" for $${cost}. Give your response now.`,
+    );
+
+    const aiResponse = result.response.text();
+    addMessage(aiResponse, "penny-msg");
+  } catch (error) {
+    console.error("AI Error:", error);
+    // Fallback if AI fails - still follows the pattern
+    addMessage(`Thinking about "${name}" for $${cost}... 🤔`, "penny-msg");
+    addMessage(
+      `You have $${balances.spendings} in Spendings right now. If you buy this for $${cost}, how much will you have left?`,
+      "penny-msg",
+    );
+    addMessage(
+      `Type your answer below! (Or type "cancel" to change your mind)`,
+      "penny-msg",
+    );
+  }
 
   // Focus the input
   const inputField = document.getElementById("user-query");
@@ -120,6 +154,7 @@ function completePurchase() {
       };
     }, 1000);
   } else if (action === "equipChain") {
+    localStorage.setItem("goldChain", "equipped");
     addMessage(
       "You're now wearing the WealthSimple Gold Chain! 💰✨",
       "penny-msg",
@@ -188,7 +223,7 @@ async function sendToGemini() {
   // Normal Penny chat if not in purchase mode
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction:
         "You are Penny, a friendly piggy bank assistant in the shop. Give financial advice to kids about their purchases. Keep responses short and encouraging.",
     });

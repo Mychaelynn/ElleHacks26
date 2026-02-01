@@ -104,7 +104,7 @@ body {
 }
 .character_spritesheet {
   position: absolute;
-  background: url(/ElleHacks26/choreAssets/twoCol.png) no-repeat no-repeat;
+  background: url(choreAssets/twoCol.png) no-repeat no-repeat;
   background-size: 100%;
   width: calc(var(--grid-cell) * 8);
   height: calc(var(--grid-cell) * 8);

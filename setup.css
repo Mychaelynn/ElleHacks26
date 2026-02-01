@@ -1,37 +1,13 @@
-/* Penny in the Top Right */
-.penny-fixed-corner {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
-  z-index: 1000;
-  transition: transform 0.3s;
-}
-
-.penny-fixed-corner:hover {
-  transform: scale(1.1) rotate(5deg);
-}
-
-#penny-icon {
-  width: 70px;
-  height: 70px;
-  border: 3px solid #22c55e;
-  border-radius: 50%;
-  background: white;
-}
-
-.notification-dot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: red;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-  text-align: center;
-  line-height: 20px;
+/* Background */
+.setup-bg {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  background: url("homeBackground.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+  font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 /* Setup Card */
@@ -40,96 +16,223 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.8);
 }
 
 .welcome-box {
-  background: white;
-  padding: 30px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 4px solid #22c55e;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   text-align: center;
-  max-width: 400px;
+  max-width: 450px;
+}
+
+.welcome-box h1 {
+  color: #166534;
+  margin-top: 0;
+}
+
+.welcome-box hr {
+  border: none;
+  border-top: 2px dashed #22c55e;
+  margin: 20px 0;
+}
+
+.welcome-box label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #166534;
+}
+
+#age-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #22c55e;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#age-input:focus {
+  border-color: #16a34a;
 }
 
 .next-btn {
-  background: #2563eb;
+  background: #22c55e;
   color: white;
   border: none;
   padding: 15px 30px;
   border-radius: 10px;
   font-size: 1.1rem;
+  font-weight: bold;
   cursor: pointer;
   margin-top: 20px;
+  transition:
+    background 0.2s,
+    transform 0.1s;
 }
 
-.hidden {
-  display: none;
+.next-btn:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+/* Penny Chat UI (Matching all other pages) */
+.penny-fixed-corner {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 2000;
+  transition: transform 0.3s ease;
+}
+
+.penny-fixed-corner:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+#penny-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 5px solid #22c55e;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: block;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 24px;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #penny-chat-window {
   position: fixed;
-  bottom: 100px;
+  bottom: 120px;
   right: 20px;
-  width: 320px;
-  height: 450px; /* Fixed height is key */
+  width: 340px;
+  height: 480px;
   background: white;
-  border: 3px solid #22c55e;
-  border-radius: 15px;
+  border: 4px solid #22c55e;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   z-index: 2001;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.chat-header {
+  background: #22c55e;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.close-chat {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fffb;
+  scroll-behavior: smooth;
+}
+
+.penny-msg {
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px;
+  border-radius: 15px 15px 15px 5px;
+  align-self: flex-start;
+  max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  white-space: pre-line;
+  margin: 0;
+}
+
+.user-msg {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 12px;
+  border-radius: 15px 15px 5px 15px;
+  align-self: flex-end;
+  text-align: right;
+  max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 0;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 15px;
+  background: white;
+  border-top: 2px solid #eee;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  gap: 10px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+}
+
+.chat-input-area input:focus {
+  border-color: #22c55e;
+}
+
+.chat-input-area button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.chat-input-area button:hover {
+  background: #16a34a;
 }
 
 .chat-hidden {
   display: none !important;
 }
 
-.chat-header {
-  background: #dcfce7;
-  padding: 10px;
-  border-bottom: 2px solid #22c55e;
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-}
-
-#chat-messages {
-  flex: 1; /* Takes up all space except header/input */
-  padding: 10px;
-  overflow-y: auto; /* Adds scrollbar only when needed */
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  scroll-behavior: smooth; /* Nice sliding effect */
-}
-
-.penny-msg {
-  color: #166534;
-  background: #f0fdf4;
-  padding: 8px;
-  border-radius: 8px;
-  margin: 5px 0;
-}
-.user-msg {
-  color: #1e40af;
-  background: #eff6ff;
-  padding: 8px;
-  border-radius: 8px;
-  margin: 5px 0;
-  text-align: right;
-}
-
-.chat-input-area {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #eee;
-}
-#user-query {
-  flex: 1;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px;
+.hidden {
+  display: none !important;
 }

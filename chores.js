@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 //gemini api
-const API_KEY = "AIzaSyCiFp5JQUB0fhsaGKqFyobt0iTrP0vRuwc";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 var character = document.querySelector(".character");
@@ -13,7 +13,6 @@ var held_directions = [];
 var speed = 1;
 var activeItem = null;
 
-// MISSING VARIABLES - These need to be defined!
 var selectedCategory = null;
 var pendingRewardAmount = 10;
 
@@ -31,19 +30,26 @@ var chores = [
   { name: "Trash", id: "trash", x: 664, y: 352, cleaned: false },
 ];
 
-//penny
-function updateStatsBoard() {
+// Helper to get balances consistently
+function getBalances() {
   const raw = localStorage.getItem("finalBalances");
-  const balances = raw
+  return raw
     ? JSON.parse(raw)
     : { wallet: 0, spendings: 0, savings: 0, rainyDay: 0 };
+}
 
+function saveBalances(balances) {
+  localStorage.setItem("finalBalances", JSON.stringify(balances));
+}
+
+//penny
+function updateStatsBoard() {
+  const balances = getBalances();
   const goalName = localStorage.getItem("targetGoal") || "Prize";
   const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
   const amountNeeded = Math.max(0, targetPrice - balances.savings);
 
   if (document.getElementById("stat-wallet")) {
-    document.getElementById("stat-wallet").innerText = balances.wallet;
     document.getElementById("stat-goal-name").innerText = goalName;
     document.getElementById("stat-needed").innerText = amountNeeded;
     document.getElementById("stat-spendings").innerText = balances.spendings;
@@ -52,28 +58,23 @@ function updateStatsBoard() {
   }
 }
 
-function getWalletBalance() {
-  const raw = localStorage.getItem("finalBalances");
-  const data = raw ? JSON.parse(raw) : { wallet: 50 };
-  return parseInt(data.wallet) || 0;
-}
-
 async function triggerPennyReward() {
-  const previousMoney = getWalletBalance();
+  const balances = getBalances();
   const rewardAmount = 10;
-  const newTotal = previousMoney + rewardAmount;
+
+  // Add to wallet first
+  balances.wallet += rewardAmount;
+  saveBalances(balances);
 
   const chatWin = document.getElementById("penny-chat-window");
-
   if (chatWin) {
     chatWin.classList.remove("chat-hidden");
   }
 
   // Set pending reward amount
   pendingRewardAmount = rewardAmount;
-  selectedCategory = null; // Reset category
+  selectedCategory = null;
 
-  // FIX: This had "aaddMessage" typo!
   addMessage(
     `Great job cleaning! You earned $${pendingRewardAmount}! 🐷`,
     "penny-msg",
@@ -86,17 +87,7 @@ async function triggerPennyReward() {
   const inputField = document.getElementById("user-query");
   if (inputField) {
     inputField.focus();
-  } else {
   }
-
-  const currentData = JSON.parse(localStorage.getItem("finalBalances")) || {
-    wallet: 0,
-    spendings: 0,
-    savings: 0,
-    rainyDay: 0,
-  };
-  currentData.wallet = newTotal;
-  localStorage.setItem("finalBalances", JSON.stringify(currentData));
 
   updateStatsBoard();
 }
@@ -110,16 +101,12 @@ window.sendToGemini = async function () {
   addMessage(userText, "user-msg");
   inputField.value = "";
 
-  const raw = localStorage.getItem("finalBalances");
-  let balances = raw
-    ? JSON.parse(raw)
-    : { wallet: 0, spendings: 0, savings: 0, rainyDay: 0 };
+  let balances = getBalances();
 
   // STEP 1: Handle Category Selection
   if (!selectedCategory) {
     const validCategories = ["spendings", "savings", "rainy day"];
     if (validCategories.includes(userText)) {
-      // Map "rainy day" to the actual key "rainyDay"
       selectedCategory = userText === "rainy day" ? "rainyDay" : userText;
 
       const currentBalance = balances[selectedCategory] || 0;
@@ -139,15 +126,15 @@ window.sendToGemini = async function () {
   }
 
   // STEP 2: Handle Math Calculation
-
   const previousAmount = balances[selectedCategory] || 0;
   const expectedTotal = previousAmount + pendingRewardAmount;
   const userMath = parseInt(userText);
 
   if (userMath === expectedTotal) {
-    // Math is correct! Save the data.
+    // Deduct from wallet and add to category
+    balances.wallet -= pendingRewardAmount;
     balances[selectedCategory] = expectedTotal;
-    localStorage.setItem("finalBalances", JSON.stringify(balances));
+    saveBalances(balances);
     updateStatsBoard();
 
     addMessage(
@@ -160,22 +147,16 @@ window.sendToGemini = async function () {
       "penny-msg",
     );
 
-    // 3. Reset variables
     selectedCategory = null;
     pendingRewardAmount = 0;
 
-    // 4. Redirect after a 3-second delay
     setTimeout(() => {
-      window.location.href = "main.html"; // Ensure this matches your hub filename
+      window.location.href = "main.html";
     }, 3000);
-
-    // Reset for next time
-    selectedCategory = null;
-    pendingRewardAmount = 0;
   } else {
-    // Math is wrong. Ask Gemini to help.
+    // Math is wrong
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `You are Penny the Piggy Bank. 
           The user is adding $${pendingRewardAmount} to their $${previousAmount} in ${selectedCategory}. 
           They guessed $${userText}, but it should be $${expectedTotal}. 
@@ -249,7 +230,7 @@ function checkProximity() {
     }
   });
   if (foundAny && cleanPrompt) {
-    cleanPrompt.innerHTML = `Press <b>E</b> to clean ${activeItem.name} (+5$)`;
+    cleanPrompt.innerHTML = `Press <b>E</b> to clean ${activeItem.name} (+10$)`;
     cleanPrompt.classList.remove("hidden");
   } else if (cleanPrompt) {
     cleanPrompt.classList.add("hidden");
@@ -307,7 +288,9 @@ const step = () => {
   window.requestAnimationFrame(step);
 };
 
+// INITIALIZATION - Set dirty room background!
 updateStatsBoard();
+updateMapBackground(); // <- THIS WAS MISSING!
 step();
 
 document.addEventListener("keydown", (e) => {
@@ -339,7 +322,7 @@ document.addEventListener("keyup", (e) => {
   if (index > -1) held_directions.splice(index, 1);
 });
 
-//d-pad
+//d-pad (same as before)
 var isPressed = false;
 const removePressedAll = () => {
   document.querySelectorAll(".dpad-button").forEach((d) => {

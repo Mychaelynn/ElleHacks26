@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { updateUI, getBalances, saveBalances } from "./state.js";
 
-const API_KEY = "AIzaSyDk3isNLBDgRkx10pgPhblPrZcKX8_sT5E";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const UMBRELLA_COST = 10;
@@ -9,62 +9,168 @@ const UMBRELLA_COST = 10;
 // Check for rainy day event (1/3 chance)
 function checkRainyDay() {
   const randomChance = Math.random(); // 0 to 1
-
-  if (randomChance < 0.33) {
-    // 1/3 chance
-    return true;
-  }
-  return false;
+  return randomChance < 0.33; // 1/3 chance = 33%
 }
 
-// Handle rainy day event
-function handleRainyDay() {
+// Handle rainy day event with AI
+// Handle rainy day event with AI
+async function handleRainyDay() {
   let balances = getBalances();
+  const age = localStorage.getItem("playerAge") || "7";
 
   // Open Penny's chat
   const win = document.getElementById("penny-chat-window");
   if (win) win.classList.remove("chat-hidden");
 
-  alert(
+  addMessage(
     "☔ Oh no! You walked back to the Hub and got caught in the rain! You need to buy an umbrella for $10. 🌧️",
     "penny-msg",
   );
 
+  let situation = "";
+  let usedFromRainyDay = 0;
+  let usedFromSavings = 0;
+  let usedFromSpendings = 0;
+  let debtAmount = 0;
+
   if (balances.rainyDay >= UMBRELLA_COST) {
-    // User has enough in rainy day fund
+    // SCENARIO 1: Full coverage from Rainy Day fund
+    situation = "full_coverage";
     balances.rainyDay -= UMBRELLA_COST;
+    usedFromRainyDay = UMBRELLA_COST;
     saveBalances(balances);
     updateUI();
-
-    alert(
-      `Great job! You used your Rainy Day fund to buy the umbrella. You now have $${balances.rainyDay} left in your Rainy Day fund. This is exactly why we save for unexpected expenses! 🐷💪`,
-      "penny-msg",
-    );
   } else {
-    // Not enough in rainy day fund - take from savings
-    const shortfall = UMBRELLA_COST - balances.rainyDay;
+    // Not enough in rainy day fund - need to pull from elsewhere
+    let remaining = UMBRELLA_COST - balances.rainyDay;
+    usedFromRainyDay = balances.rainyDay;
+    balances.rainyDay = 0; // Empty rainy day fund
 
-    if (balances.savings >= shortfall) {
-      // Take from savings
-      const usedFromRainyDay = balances.rainyDay;
-      balances.rainyDay = 0;
-      balances.savings -= shortfall;
+    // DOUBLE THE COST when taking from savings (penalty for no rainy day fund)
+    remaining = remaining * 2;
+
+    // Try to take from savings first
+    if (balances.savings >= remaining) {
+      // SCENARIO 2: Rainy Day + Savings (no debt)
+      situation = "rainy_and_savings";
+      usedFromSavings = remaining;
+      balances.savings -= remaining;
       saveBalances(balances);
       updateUI();
-
-      addMesalertage(
-        `Uh oh! You only had $${usedFromRainyDay} in your Rainy Day fund, so we had to take $${shortfall} from your Savings/Spendings to buy the umbrella. 😟`,
-        "penny-msg",
-      );
-
-      alert(
-        `This is why it's SO important to save for rainy days! Unexpected things happen, and if we don't prepare, it affects our big goals. Let's make sure to put some money in your Rainy Day fund next time you earn! 🐷💡`,
-        "penny-msg",
-      );
     } else {
-      // Not enough money anywhere
-      alert(
-        `Oh no! You don't have enough money even in your Savings. You need $${UMBRELLA_COST} total but only have $${balances.rainyDay + balances.savings}. You'll have to walk home wet this time! Next time, make sure you save for rainy days! 🌧️😢`,
+      // Take what we can from savings, then go to spendings
+      usedFromSavings = balances.savings;
+      remaining -= balances.savings;
+      balances.savings = 0;
+
+      if (balances.spendings >= remaining) {
+        // SCENARIO 3: All three accounts (no debt)
+        situation = "all_three_accounts";
+        usedFromSpendings = remaining;
+        balances.spendings -= remaining;
+        saveBalances(balances);
+        updateUI();
+      } else {
+        // SCENARIO 4: Not enough anywhere - go into debt
+        situation = "debt";
+        usedFromSpendings = balances.spendings;
+        remaining -= balances.spendings;
+        balances.spendings = 0;
+        balances.savings = -remaining; // Go negative!
+        debtAmount = remaining;
+
+        saveBalances(balances);
+        updateUI();
+      }
+    }
+  }
+
+  // Get AI explanation based on situation
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: `You are Penny, a friendly piggy bank assistant teaching a ${age} year old about financial responsibility.
+
+SITUATION: They just had to buy an umbrella for $${UMBRELLA_COST} due to unexpected rain.
+
+WHAT HAPPENED:
+${
+  situation === "full_coverage"
+    ? `- Paid $${usedFromRainyDay} from Rainy Day fund
+- Still have $${balances.rainyDay} left in Rainy Day
+- Didn't touch Savings ($${balances.savings}) or Spendings ($${balances.spendings})`
+    : ""
+}${
+        situation === "rainy_and_savings"
+          ? `- Used $${usedFromRainyDay} from Rainy Day (now $0)
+- Had to take $${usedFromSavings} from Savings (DOUBLED as penalty!)
+- Now have $${balances.savings} in Savings
+- This affected their goal savings!
+- They paid DOUBLE because they didn't have enough in Rainy Day!`
+          : ""
+      }${
+        situation === "all_three_accounts"
+          ? `- Used $${usedFromRainyDay} from Rainy Day (now $0)
+- Used $${usedFromSavings} from Savings (now $0) - DOUBLED penalty applied!
+- Had to use $${usedFromSpendings} from Spendings
+- Now have $${balances.spendings} in Spendings
+- They paid DOUBLE because they didn't have enough in Rainy Day!`
+          : ""
+      }${
+        situation === "debt"
+          ? `- Used $${usedFromRainyDay} from Rainy Day (now $0)
+- Used $${usedFromSavings} from Savings (now $0)
+- Used $${usedFromSpendings} from Spendings (now $0)
+- Still owed $${debtAmount} - now in DEBT!
+- Savings is now -$${debtAmount}
+- They paid DOUBLE because they didn't have enough in Rainy Day!`
+          : ""
+      }
+
+YOUR RESPONSE (based on age ${age}):
+${situation === "full_coverage" ? "Celebrate! Explain why having a Rainy Day fund is AWESOME - they didn't have to touch their savings or spendings! This is exactly why we save for emergencies. Make them feel proud and smart!" : ""}${situation === "rainy_and_savings" ? "Explain that because they didn't have enough in Rainy Day, they had to pay DOUBLE from their Savings! This is a big lesson about why emergency funds are SO important. Encourage them to build it back up. Keep it age-appropriate but make the lesson clear." : ""}${situation === "all_three_accounts" ? "This is a major teaching moment! They had to pay DOUBLE and use ALL their money because their Rainy Day fund was empty. Explain why having enough in Rainy Day would have saved them money and protected their other accounts. Encourage them to rebuild the Rainy Day fund FIRST." : ""}${situation === "debt" ? "Explain debt in SIMPLE terms for a ${age} year old: When you owe money, you have to pay it back before you can save again. It's like having a negative score in a game. They also paid DOUBLE because they didn't have emergency savings! Explain they need to earn money to get back to $0, THEN they can save again. Make it serious but not scary - focus on the lesson and how to fix it." : ""}
+
+Keep response 2-4 sentences. Be encouraging but teach the lesson clearly. EMPHASIZE the doubling penalty if they didn't have rainy day funds. Use emojis appropriate for a ${age} year old.`,
+    });
+
+    const result = await model.generateContent(
+      `Explain what just happened with the umbrella purchase based on their situation.`,
+    );
+
+    addMessage(result.response.text(), "penny-msg");
+  } catch (error) {
+    console.error("AI Error in rainy day:", error);
+    // Fallback messages based on situation
+    if (situation === "full_coverage") {
+      addMessage(
+        `Great job! You used your Rainy Day fund to buy the umbrella. You now have $${balances.rainyDay} left in your Rainy Day fund. This is exactly why we save for unexpected expenses! 🐷💪`,
+        "penny-msg",
+      );
+    } else if (situation === "rainy_and_savings") {
+      addMessage(
+        `Uh oh! You only had $${usedFromRainyDay} in your Rainy Day fund, so we had to take $${usedFromSavings} from your Savings to buy the umbrella - and it DOUBLED as a penalty! 😟`,
+        "penny-msg",
+      );
+      addMessage(
+        `This is why it's SO important to save for rainy days! Without emergency savings, things cost you MORE! Let's make sure to put money in your Rainy Day fund next time! 🐷💡`,
+        "penny-msg",
+      );
+    } else if (situation === "all_three_accounts") {
+      addMessage(
+        `Uh oh! You only had $${usedFromRainyDay} in Rainy Day, so you had to pay DOUBLE! We took $${usedFromSavings} from Savings and $${usedFromSpendings} from Spendings! 😟`,
+        "penny-msg",
+      );
+      addMessage(
+        `This is why emergency savings are SO important! Without a Rainy Day fund, emergencies cost you DOUBLE. Let's rebuild that fund! 🐷💡`,
+        "penny-msg",
+      );
+    } else if (situation === "debt") {
+      addMessage(
+        `Oh no! You didn't have enough in Rainy Day, so it DOUBLED! We used everything from all accounts and you still owe $${debtAmount}! 😢`,
+        "penny-msg",
+      );
+      addMessage(
+        `Your Savings is now -$${debtAmount}. You'll need to earn money to pay this back before you can save for your goal again! This is why saving for emergencies is SO important! 🐷💡`,
         "penny-msg",
       );
     }
@@ -82,10 +188,39 @@ function addMessage(text, className) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+window.sendToGemini = async function () {
+  const inputField = document.getElementById("user-query");
+  const userText = inputField.value.trim();
+
+  if (!userText) return;
+
+  addMessage(userText, "user-msg");
+  inputField.value = "";
+
+  // Normal Penny chat
+  try {
+    const age = localStorage.getItem("playerAge") || "7";
+    const balances = getBalances();
+    const goalName = localStorage.getItem("targetGoal") || "your goal";
+    const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: `You are Penny, a friendly piggy bank assistant helping a ${age} year old save for ${goalName} (costs $${targetPrice}). 
+      Current balances: Spendings $${balances.spendings}, Savings $${balances.savings}, Rainy Day $${balances.rainyDay}.
+      Give short, encouraging financial advice for kids. Keep responses under 3 sentences.`,
+    });
+
+    const result = await model.generateContent(userText);
+    addMessage(result.response.text(), "penny-msg");
+  } catch (error) {
+    addMessage("Oops! I lost my voice for a moment! 🐷", "penny-msg");
+  }
+};
+
 // Main Hub Initialization
 async function initMainHub() {
   try {
-    const nav = document.querySelector(".game-nav");
     const win = document.getElementById("penny-chat-window");
 
     if (win) {
@@ -101,17 +236,17 @@ async function initMainHub() {
 
     // Check for rainy day BEFORE welcome message
     if (checkRainyDay()) {
-      handleRainyDay();
+      await handleRainyDay(); // Wait for rainy day to complete
       // Small delay before showing welcome message
       setTimeout(() => {
-        alert(
+        addMessage(
           `Now that that's taken care of... Welcome back to the Hub! You still need $${amountNeeded} for your ${goalName}! 💭`,
           "penny-msg",
         );
       }, 2000);
     } else {
       // Normal welcome
-      alert(
+      addMessage(
         `Hi! Welcome to the Hub! You still need $${amountNeeded} for your ${goalName}! 💭`,
         "penny-msg",
       );

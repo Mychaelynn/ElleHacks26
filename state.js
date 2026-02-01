@@ -34,3 +34,13 @@ export function updateUI() {
     if (el) el.innerText = value;
   }
 }
+
+window.addTestMoney = function (spendings = 100, savings = 50, rainyDay = 25) {
+  let balances = getBalances();
+  balances.spendings += spendings;
+  balances.savings += savings;
+  balances.rainyDay += rainyDay;
+  saveBalances(balances);
+  updateUI();
+  console.log("💰 Added test money!", balances);
+};

@@ -2,7 +2,7 @@ import { getBalances, saveBalances, updateUI } from "./state.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Setup API
-const API_KEY = "AIzaSyDk3isNLBDgRkx10pgPhblPrZcKX8_sT5E";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 let growthInterval = null;
@@ -45,7 +45,7 @@ async function initGardenPenny() {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction:
         "You are Penny the Piggy Bank. Explain to a child why buying seeds is like a business investment. Keep it short and use emojis.",
     });

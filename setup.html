@@ -7,17 +7,12 @@
     <link rel="stylesheet" href="setup.css" />
   </head>
   <body class="setup-bg">
-    <div class="penny-fixed-corner" onclick="togglePennyChat()">
-      <img src="mascot.png" alt="Penny" id="penny-icon" />
-      <div class="notification-dot">!</div>
-    </div>
-
     <div class="setup-container">
       <div class="welcome-box">
         <h1>Welcome to the Team!</h1>
         <p id="welcome-text">
-          "Hi! I'm <b>Penny</b>. I'll be staying right up there in the corner if
-          you ever need a hint or have a question about money!"
+          "Hi! I'm <b>Penny</b>. I'll be staying right down there in the corner
+          if you ever need a hint or have a question about money!"
         </p>
 
         <hr />
@@ -25,23 +20,16 @@
         <label for="age-input">First, tell me how old you are:</label>
         <input type="number" id="age-input" placeholder="Enter your age" />
 
-        
-        <button
-          a
-          href="chosePrize.html"
-          class="next-btn"
-          onclick="saveAgeAndGo()"
-        >
-          Continue to choose your jounrey!
+        <button class="next-btn" onclick="saveAgeAndGo()">
+          Continue to choose your journey!
         </button>
       </div>
     </div>
 
-    <div id="penny-overlay" class="hidden">
-      <div class="chat-card">
-        <button onclick="togglePennyChat()" class="close-btn">X</button>
-        <p id="ai-response">How can I help you with your savings today?</p>
-      </div>
+    <!-- Penny Chat (Bottom Right Corner) -->
+    <div class="penny-fixed-corner" onclick="togglePennyChat()">
+      <img src="mascot.png" alt="Penny" id="penny-icon" />
+      <div class="notification-dot">!</div>
     </div>
 
     <div id="penny-chat-window" class="chat-hidden">
@@ -49,20 +37,20 @@
         <span>Chat with Penny 🐷</span>
         <button onclick="togglePennyChat()" class="close-chat">×</button>
       </div>
-      <div id="chat-messages">
-        <p class="penny-msg">
-          Hi! I'm Penny. Ask me anything about saving money!
-        </p>
-      </div>
+
+      <div id="chat-messages"></div>
+
       <div class="chat-input-area">
         <input
           type="text"
           id="user-query"
-          placeholder="Type your question..."
+          placeholder="Ask Penny..."
+          onkeypress="if (event.key === 'Enter') sendToGemini();"
         />
         <button onclick="sendToGemini()">Send</button>
       </div>
     </div>
+
     <script type="importmap">
       {
         "imports": {

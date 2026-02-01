@@ -1,7 +1,7 @@
 import { getBalances, updateUI } from "./state.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = "AIzaSyDk3isNLBDgRkx10pgPhblPrZcKX8_sT5E";
+const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. Initialization
@@ -48,15 +48,37 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
     alert("Goal achieved! Redirecting...");
 
     if (goal.includes("disney")) {
-      window.location.href = "disneyPrize.html";
+      // Check if they bought the gold chain
+      const hasGoldChain = localStorage.getItem("goldChain") === "equipped";
+
+      if (hasGoldChain) {
+        window.location.href = "disneyCool.html";
+      } else {
+        window.location.href = "disneyPrize.html";
+      }
     } else if (goal.includes("niagara")) {
-      window.location.href = "niagara.html";
+      // Check if they bought the gold chain
+      const hasGoldChain = localStorage.getItem("goldChain") === "equipped";
+
+      if (hasGoldChain) {
+        window.location.href = "niagaraCool.html";
+      } else {
+        window.location.href = "niagara.html";
+      }
+    } else if (goal.includes("wealth")) {
+      // Check if they bought the gold chain
+      const hasGoldChain = localStorage.getItem("goldChain") === "equipped";
+
+      if (hasGoldChain) {
+        window.location.href = "coolwealth.html";
+      } else {
+        window.location.href = "wealth.html";
+      }
     } else {
       alert(`🎉 Congratulations! You saved enough for ${goalName}! 🎉`);
     }
   } else {
     // FAILURE: Penny speaks
-
     openPennyChat();
     addMessage(
       `Wait! You still need $${amountNeeded} more in your Savings to buy this ticket. Keep doing your chores! 🐷💸`,

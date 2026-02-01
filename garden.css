@@ -5,7 +5,7 @@ html {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Removes scrollbars for a clean game look */
+  overflow: hidden;
   font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
@@ -50,10 +50,10 @@ html {
   background: #dcfce7;
 }
 
-/* 3. Stats Board (Anchored to Top-Left) */
+/* 3. Stats Board (Top-Left) */
 .stats-board {
   position: absolute;
-  top: 100px; /* Sits below the Nav Bar */
+  top: 100px;
   left: 30px;
   width: 220px;
   background: rgba(255, 255, 255, 0.9);
@@ -69,6 +69,13 @@ html {
   color: #166534;
   text-align: center;
 }
+
+.stats-board p {
+  margin: 5px 0;
+  color: #14532d;
+  font-size: 1rem;
+}
+
 .stats-board hr {
   border: none;
   border-top: 2px dashed #22c55e;
@@ -77,7 +84,7 @@ html {
 
 /* 4. Main Garden Content */
 .main-content {
-  margin-left: 280px; /* Offsets content to avoid overlapping the Stats Board */
+  margin-left: 280px;
   height: calc(100vh - 70px);
   margin-top: 70px;
   display: flex;
@@ -103,6 +110,11 @@ html {
   margin-bottom: 30px;
   max-width: 600px;
   font-weight: bold;
+}
+
+.garden-actions {
+  display: flex;
+  gap: 20px;
 }
 
 .garden-buy-btn {
@@ -135,18 +147,17 @@ html {
   font-weight: bold;
 }
 
-/* 5. Penny Chat UI (Bottom Right) */
-#penny-container {
+/* 5. Penny Chat UI (Matching main.css) */
+.penny-fixed-corner {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 2000;
   cursor: pointer;
-  text-align: center;
+  z-index: 2000;
   transition: transform 0.3s ease;
 }
 
-#penny-container:hover {
+.penny-fixed-corner:hover {
   transform: scale(1.1) rotate(5deg);
 }
 
@@ -157,9 +168,10 @@ html {
   border: 5px solid #22c55e;
   background: white;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: block;
 }
 
-.chat-window {
+#penny-chat-window {
   position: fixed;
   bottom: 120px;
   right: 20px;
@@ -172,6 +184,7 @@ html {
   flex-direction: column;
   z-index: 2001;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 .chat-header {
@@ -186,6 +199,14 @@ html {
   border-top-right-radius: 15px;
 }
 
+.close-chat {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 #chat-messages {
   flex: 1;
   padding: 15px;
@@ -194,6 +215,7 @@ html {
   flex-direction: column;
   gap: 12px;
   background: #f9fffb;
+  scroll-behavior: smooth;
 }
 
 .penny-msg {
@@ -203,6 +225,9 @@ html {
   border-radius: 15px 15px 15px 5px;
   align-self: flex-start;
   max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  white-space: pre-line;
+  margin: 0;
 }
 
 .user-msg {
@@ -211,36 +236,58 @@ html {
   padding: 12px;
   border-radius: 15px 15px 5px 15px;
   align-self: flex-end;
+  text-align: right;
   max-width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 0;
 }
 
 .chat-input-area {
   display: flex;
   padding: 15px;
-  gap: 10px;
+  background: white;
   border-top: 2px solid #eee;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  gap: 10px;
 }
 
 .chat-input-area input {
   flex: 1;
   padding: 10px;
-  border-radius: 10px;
   border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
 }
+
+.chat-input-area input:focus {
+  border-color: #22c55e;
+}
+
 .chat-input-area button {
   background: #22c55e;
   color: white;
   border: none;
   padding: 8px 15px;
   border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-/* 6. Utility & Custom Cursor */
+.chat-input-area button:hover {
+  background: #16a34a;
+}
+
+.chat-hidden {
+  display: none !important;
+}
+
+/* 6. Utility Classes */
 .hidden {
   display: none !important;
 }
 
+/* Custom Cursor */
 body.custom-cursor-active,
 body.custom-cursor-active * {
   cursor:
