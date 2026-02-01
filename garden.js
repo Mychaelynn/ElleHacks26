@@ -190,11 +190,12 @@ window.sendToGemini = async function () {
   // Normal Penny chat
 
   try {
+    const age = localStorage.getItem("playerAge") || "7"; // ADD THIS LINE
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction: `You are Penny the Piggy Bank. 
       Give advice about investing money and growing wealth. 
-      Tailor your language and complexity specifically for a ${userAge}-year-old child. 
+      Tailor your language and complexity specifically for a ${age}-year-old child. 
       Keep it simple, encouraging, and use relatable analogies.`, //
     });
     const result = await model.generateContent(userText);
