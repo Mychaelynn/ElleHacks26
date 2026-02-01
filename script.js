@@ -1,24 +1,21 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// 1. Setup API (Using Gemini 2.0 Flash)
+//api
 const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// 2. Game State
 let currentStep = 0;
 const steps = ["spendings", "savings", "rainyDay"];
 let balances = { wallet: 50, spendings: 0, savings: 0, rainyDay: 0 };
 
-// Math & Lesson State
+// math and stats
 let pendingAmount = 0;
 let pendingJar = "";
 let expectedRemaining = 0;
 let needsRatioLesson = false;
 
-// 3. Init Page
 async function initJarPage() {
   if (document.getElementById("jar-spendings")) {
-    // --- ADD THIS LINE ---
     updateDashboard();
 
     const chatWindow = document.getElementById("penny-chat-window");
@@ -30,12 +27,11 @@ async function initJarPage() {
   }
 }
 
-// 4. Guided Tour
+//tour
 async function explainNextJar() {
   const age = localStorage.getItem("playerAge") || "7";
   const loadingId = "loading-" + Date.now();
 
-  // 1. TOUR COMPLETE: Explain the overall Game Rules first
   if (currentStep === steps.length) {
     addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
     try {
@@ -50,7 +46,6 @@ async function explainNextJar() {
       const result = await model.generateContent("Explain the game rules.");
       document.getElementById(loadingId).innerText = result.response.text();
 
-      // Increment so the NEXT 'YES' triggers the "You are a pro" message
       currentStep++;
     } catch (e) {
       document.getElementById(loadingId).innerText =
@@ -60,7 +55,6 @@ async function explainNextJar() {
     return;
   }
 
-  // 2. FINAL STATE: "You are a pro"
   if (currentStep > steps.length) {
     addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
     try {
@@ -79,7 +73,8 @@ async function explainNextJar() {
     return;
   }
 
-  // 3. INDIVIDUAL JAR TOUR (Steps 0, 1, 2)
+
+  ///different jars
   const jarId = steps[currentStep];
   highlightJar(jarId);
   addMessage("Penny is thinking... 💭", "penny-msg", loadingId);
@@ -96,7 +91,7 @@ async function explainNextJar() {
   }
 }
 
-// 5. Money Allocation with Ratio Lesson
+ //miney allocaitn
 function allocateMoney(jarType) {
   if (currentStep < steps.length) return;
 
@@ -110,8 +105,7 @@ function allocateMoney(jarType) {
     return;
   }
 
-  // NEW: Ratio Lesson Check
-  // If user tries to put more than $25 (half of their total) into Spendings
+  // cant put moer than half in spendings
   if (jarType === "spendings" && balances.spendings + amount > 25) {
     needsRatioLesson = true;
     pendingAmount = amount;
@@ -138,7 +132,6 @@ function startMathChallenge(jarType, amount) {
   );
 }
 
-// 6. Gemini Send Function
 async function sendToGemini() {
   const inputField = document.getElementById("user-query");
   const userText = inputField.value.trim().toLowerCase();
@@ -146,14 +139,13 @@ async function sendToGemini() {
   addMessage(userText, "user-msg");
   inputField.value = "";
 
-  // A. Tour Logic
   if (userText === "yes" && currentStep < steps.length) {
     currentStep++;
     explainNextJar();
     return;
   }
 
-  // B. Ratio Lesson Logic
+  // ratio
   if (needsRatioLesson) {
     if (userText === "reconsider") {
       addMessage(
@@ -175,7 +167,6 @@ async function sendToGemini() {
     return;
   }
 
-  // C. Math Challenge Logic
   if (pendingAmount > 0) {
     if (parseInt(userText) === expectedRemaining) {
       balances.wallet = expectedRemaining;
@@ -192,7 +183,7 @@ async function sendToGemini() {
     return;
   }
 
-  // D. Regular AI Chat
+  // regular AI Chat
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(userText);
@@ -204,20 +195,13 @@ async function sendToGemini() {
 function saveAgeAndGo() {
   const age = document.getElementById("age-input").value;
 
-  // Validation to make sure the kid entered a number
   if (age === "") {
     alert("Please enter your age!");
     return;
   }
-
-  // Save it so Penny can use it on the next pages
   localStorage.setItem("playerAge", age);
-
-  // Now move to the next page
   window.location.href = "chosePrize.html";
 }
-
-// 7. UI Helpers
 
 function addMessage(text, className, id = null) {
   const chatMessages = document.getElementById("chat-messages");
@@ -244,25 +228,17 @@ function togglePennyChat() {
 }
 
 function selectGoal(name, price) {
-  // 1. Save the goal details for the Hub and Jar pages
   localStorage.setItem("targetGoal", name);
   localStorage.setItem("targetPrice", price);
-
-  // 2. Alert the user (Optional, but good for feedback)
   alert("Great choice! Let's go fill up our Jars for the " + name + "!");
-
-  // 3. Move to the next page
   window.location.href = "jar.html";
 }
 
 function updateDashboard() {
-  // 1. Fetch Prize Info from storage
   const goalName = localStorage.getItem("targetGoal") || "Prize";
   const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
   const amountNeeded = Math.max(0, targetPrice - balances.savings);
 
-  // 2. Create the Unified Mapping
-  // This connects your logic variables to your HTML IDs
   const mapping = {
     "stat-wallet": balances.wallet,
     "stat-spendings": balances.spendings,
@@ -272,7 +248,6 @@ function updateDashboard() {
     "stat-needed": amountNeeded,
   };
 
-  // 3. Loop and Update UI
   Object.entries(mapping).forEach(([id, value]) => {
     const el = document.getElementById(id);
     if (el) {
@@ -280,10 +255,7 @@ function updateDashboard() {
     }
   });
 
-  // 4. Persistence: Save the 'notebook' for other pages
   localStorage.setItem("finalBalances", JSON.stringify(balances));
-
-  // 5. Navigation Logic
   if (balances.wallet === 0 && pendingAmount === 0) {
     addMessage(
       `Great! You still need $${amountNeeded} for your ${goalName}. Let's go! 🏰`,

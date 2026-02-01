@@ -1,4 +1,4 @@
-/* 1. Main Background */
+/* Main Background */
 .shop-bg {
   margin: 0;
   padding: 0;
@@ -10,7 +10,6 @@
   overflow: hidden;
 }
 
-/* 2. Header Box */
 .shop-header {
   text-align: center;
   margin-top: 30px;
@@ -24,14 +23,12 @@
   transform: translateX(-50%);
 }
 
-/* 3. The Toy Layout */
 .toy-shelf {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 60px;
-  margin-top: 10vh; /* Adjust this to make toys sit on your drawn shelf */
-}
+  margin-top: 10vh; }
 
 .toy-card {
   text-align: center;
@@ -44,8 +41,8 @@
   width: 100%;
   max-width: 700px;
   height: auto;
-  /* This glow helps the item stand out from the background */
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+  /* fglow */
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); 
 }
 
 .toy-card h3 {
@@ -61,7 +58,6 @@
   border-radius: 10px;
 }
 
-/* 4. Animations */
 @keyframes float {
   0%,
   100% {
@@ -82,14 +78,7 @@
   animation: float 4s ease-in-out infinite;
 }
 
-/* 5. Mascot & Chat */
-.penny-fixed-corner {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
-  z-index: 10;
-}
+/* penny */
 #penny-icon {
   width: 80px;
   height: 80px;
@@ -100,37 +89,14 @@
 .chat-hidden {
   display: none !important;
 }
-#penny-chat-window {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
-  height: 400px;
-  background: white;
-  border-radius: 15px;
-  border: 3px solid #22c55e;
-  display: flex;
-  flex-direction: column;
-}
+
+
 
 .hidden {
   display: none;
 }
 
-#penny-chat-window {
-  position: fixed;
-  bottom: 100px; /* Sits above the fixed mascot */
-  right: 20px;
-  width: 300px;
-  height: 400px;
-  background: white;
-  border: 2px solid #22c55e;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
-}
+
 
 .chat-hidden {
   display: none !important;
@@ -146,14 +112,14 @@
 }
 
 #chat-messages {
-  flex: 1; /* Takes up all space except header/input */
+  flex: 1; 
   padding: 10px;
-  overflow-y: auto; /* Adds scrollbar only when needed */
+  overflow-y: auto; 
   font-size: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  scroll-behavior: smooth; /* Nice sliding effect */
+  scroll-behavior: smooth; 
 }
 
 .penny-msg {
@@ -184,13 +150,12 @@
   padding: 5px;
 }
 
-/* 5. Mascot & Chat - UPDATED */
 .penny-fixed-corner {
   position: fixed;
   top: 20px;
   right: 20px;
   cursor: pointer;
-  z-index: 2000; /* Increased to be higher than everything else */
+  z-index: 2000; 
   transition: transform 0.3s;
 }
 
@@ -199,7 +164,7 @@
   bottom: 100px;
   right: 20px;
   width: 320px;
-  height: 450px; /* Fixed height is key */
+  height: 450px; 
   background: white;
   border: 3px solid #22c55e;
   border-radius: 15px;

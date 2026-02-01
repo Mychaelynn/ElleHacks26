@@ -1,7 +1,7 @@
 import { getBalances, saveBalances, updateUI } from "./state.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Setup API
+// api
 const API_KEY = "AIzaSyB1YTvKeTmc41vfRze1XAiyvRHPn5FhCm8";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -10,7 +10,6 @@ let sessionEarnings = 0;
 let selectedCategory = null;
 let pendingRewardAmount = 0;
 
-// 1. Initial Load
 window.addEventListener("DOMContentLoaded", () => {
   try {
     updateUI();

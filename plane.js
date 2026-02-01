@@ -43,7 +43,7 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
   const amountNeeded = goalAmount - balances.savings;
 
   if (amountNeeded <= 0) {
-    // SUCCESS: Redirect based on goal name
+    //success redirect based on goal name
     const goal = goalName.toLowerCase();
     alert("Goal achieved! Redirecting...");
 
@@ -57,7 +57,6 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
         window.location.href = "disneyPrize.html";
       }
     } else if (goal.includes("niagara")) {
-      // Check if they bought the gold chain
       const hasGoldChain = localStorage.getItem("goldChain") === "equipped";
 
       if (hasGoldChain) {
@@ -66,7 +65,6 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
         window.location.href = "niagara.html";
       }
     } else if (goal.includes("wealth")) {
-      // Check if they bought the gold chain
       const hasGoldChain = localStorage.getItem("goldChain") === "equipped";
 
       if (hasGoldChain) {
@@ -78,7 +76,7 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
       alert(`🎉 Congratulations! You saved enough for ${goalName}! 🎉`);
     }
   } else {
-    // FAILURE: Penny speaks
+    // failture then penny speaks
     openPennyChat();
     addMessage(
       `Wait! You still need $${amountNeeded} more in your Savings to buy this ticket. Keep doing your chores! 🐷💸`,
@@ -87,7 +85,6 @@ document.getElementById("buy-ticket-btn").addEventListener("click", () => {
   }
 });
 
-// 3. Penny UI Helpers
 function openPennyChat() {
   const win = document.getElementById("penny-chat-window");
 
@@ -113,7 +110,7 @@ function addMessage(text, className) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// 4. Gemini AI
+
 window.sendToGemini = async function () {
   const inputField = document.getElementById("user-query");
   const userText = inputField.value.trim();

@@ -13,12 +13,10 @@ function checkRainyDay() {
 }
 
 // Handle rainy day event with AI
-// Handle rainy day event with AI
 async function handleRainyDay() {
   let balances = getBalances();
   const age = localStorage.getItem("playerAge") || "7";
 
-  // Open Penny's chat
   const win = document.getElementById("penny-chat-window");
   if (win) win.classList.remove("chat-hidden");
 
@@ -34,49 +32,46 @@ async function handleRainyDay() {
   let debtAmount = 0;
 
   if (balances.rainyDay >= UMBRELLA_COST) {
-    // SCENARIO 1: Full coverage from Rainy Day fund
+    //full coverage from Rainy Day fund
     situation = "full_coverage";
     balances.rainyDay -= UMBRELLA_COST;
     usedFromRainyDay = UMBRELLA_COST;
     saveBalances(balances);
     updateUI();
   } else {
-    // Not enough in rainy day fund - need to pull from elsewhere
+    // Not enough in rainy day fund
     let remaining = UMBRELLA_COST - balances.rainyDay;
     usedFromRainyDay = balances.rainyDay;
-    balances.rainyDay = 0; // Empty rainy day fund
+    balances.rainyDay = 0; 
 
-    // DOUBLE THE COST when taking from savings (penalty for no rainy day fund)
+    // Double cost when taking from savings (penalty for no rainy day fund)
     remaining = remaining * 2;
 
-    // Try to take from savings first
     if (balances.savings >= remaining) {
-      // SCENARIO 2: Rainy Day + Savings (no debt)
       situation = "rainy_and_savings";
       usedFromSavings = remaining;
       balances.savings -= remaining;
       saveBalances(balances);
       updateUI();
     } else {
-      // Take what we can from savings, then go to spendings
       usedFromSavings = balances.savings;
       remaining -= balances.savings;
       balances.savings = 0;
 
       if (balances.spendings >= remaining) {
-        // SCENARIO 3: All three accounts (no debt)
+        //All three accounts (no debt)
         situation = "all_three_accounts";
         usedFromSpendings = remaining;
         balances.spendings -= remaining;
         saveBalances(balances);
         updateUI();
       } else {
-        // SCENARIO 4: Not enough anywhere - go into debt
+        //Not enough anywhere then go into debt
         situation = "debt";
         usedFromSpendings = balances.spendings;
         remaining -= balances.spendings;
         balances.spendings = 0;
-        balances.savings = -remaining; // Go negative!
+        balances.savings = -remaining; 
         debtAmount = remaining;
 
         saveBalances(balances);
@@ -85,7 +80,7 @@ async function handleRainyDay() {
     }
   }
 
-  // Get AI explanation based on situation
+  //AI explanation based on situation
   try {
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
@@ -140,7 +135,6 @@ Keep response 2-4 sentences. Be encouraging but teach the lesson clearly. EMPHAS
     addMessage(result.response.text(), "penny-msg");
   } catch (error) {
     console.error("AI Error in rainy day:", error);
-    // Fallback messages based on situation
     if (situation === "full_coverage") {
       addMessage(
         `Great job! You used your Rainy Day fund to buy the umbrella. You now have $${balances.rainyDay} left in your Rainy Day fund. This is exactly why we save for unexpected expenses! 🐷💪`,
@@ -177,7 +171,6 @@ Keep response 2-4 sentences. Be encouraging but teach the lesson clearly. EMPHAS
   }
 }
 
-// Define addMessage
 function addMessage(text, className) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) {
@@ -197,7 +190,6 @@ window.sendToGemini = async function () {
   addMessage(userText, "user-msg");
   inputField.value = "";
 
-  // Normal Penny chat
   try {
     const age = localStorage.getItem("playerAge") || "7";
     const balances = getBalances();
@@ -218,7 +210,6 @@ window.sendToGemini = async function () {
   }
 };
 
-// Main Hub Initialization
 async function initMainHub() {
   try {
     const win = document.getElementById("penny-chat-window");
@@ -234,10 +225,10 @@ async function initMainHub() {
 
     updateUI();
 
-    // Check for rainy day BEFORE welcome message
+    //check for rainy day BEFORE welcome message
     if (checkRainyDay()) {
       await handleRainyDay(); // Wait for rainy day to complete
-      // Small delay before showing welcome message
+      // small delay before showing welcome message
       setTimeout(() => {
         addMessage(
           `Now that that's taken care of... Welcome back to the Hub! You still need $${amountNeeded} for your ${goalName}! 💭`,
@@ -245,7 +236,7 @@ async function initMainHub() {
         );
       }, 2000);
     } else {
-      // Normal welcome
+      // normal welcome
       addMessage(
         `Hi! Welcome to the Hub! You still need $${amountNeeded} for your ${goalName}! 💭`,
         "penny-msg",

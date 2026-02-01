@@ -1,4 +1,3 @@
-/* Shopping Page Styles */
 
 .shop-grid {
   display: grid;
@@ -50,7 +49,7 @@
 .price {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #e11d48; /* Red for "spending" warning */
+  color: #e11d48; 
   margin: 10px 0;
 }
 
@@ -86,7 +85,6 @@
   margin: 0;
 }
 
-/* Penny Chat UI (Matching main.css and garden.css) */
 .penny-fixed-corner {
   position: fixed;
   bottom: 20px;
@@ -222,7 +220,7 @@
 }
 
 #video-overlay {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -252,12 +250,9 @@
   font-weight: bold;
   cursor: pointer;
 }
-/* Custom Cursor */
 body.custom-cursor-active * {
   cursor: url("shopping/noHover-removebg-preview.png"), auto !important;
 }
-
-/* Specific hover state for interactive elements */
 body.custom-cursor-active a:hover,
 body.custom-cursor-active button:hover,
 body.custom-cursor-active .shop-card:hover,

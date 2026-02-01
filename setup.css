@@ -1,4 +1,3 @@
-/* Background */
 .setup-bg {
   margin: 0;
   padding: 0;
@@ -10,7 +9,7 @@
   font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
-/* Setup Card */
+/* setup Card */
 .setup-container {
   height: 100vh;
   display: flex;
@@ -81,7 +80,7 @@
   transform: scale(1.05);
 }
 
-/* Penny Chat UI (Matching all other pages) */
+/* penny chat UI  */
 .penny-fixed-corner {
   position: fixed;
   bottom: 20px;
