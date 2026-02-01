@@ -1,174 +1,203 @@
-// --- 1. SETUP VARIABLES ---
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+//gemini api
+const API_KEY = "AIzaSyDk3isNLBDgRkx10pgPhblPrZcKX8_sT5E"; 
+const genAI = new GoogleGenerativeAI(API_KEY);
+
 var character = document.querySelector(".character");
 var map = document.querySelector(".map");
-var dialogBox = document.querySelector(".dialog-box");
-var dialogText = document.getElementById("dialog-text");
-var cleanPrompt = document.getElementById("clean-prompt"); // Get the E-key prompt
-
-// Start coordinates
+var cleanPrompt = document.getElementById("clean-prompt");
 var x = 90;
 var y = 34;
-var held_directions = []; 
-var speed = 1; 
+var held_directions = [];
+var speed = 1;
+var activeItem = null;
 
-// --- 2. GAME STATE & TARGETS ---
-// The specific spot you want to clean (Screen Pixels)
-var targetPixelX = 664; 
-var targetPixelY = 352;
-
-var kitchenState = {
-   sink: { dirty: true, message_dirty: "Dishes everywhere!", message_clean: "Sparkling clean." },
-   dishwasher: { dirty: true, message_dirty: "Empty.", message_clean: "Running." },
-   trash: { dirty: true, message_dirty: "Overflowing!", message_clean: "Empty." },
-   fridge: { dirty: false, message_dirty: "", message_clean: "Humming quietly." }
+//images
+const bgImages = {
+    dirty:      "url('/ElleHacks26/choreAssets/dirtyKitchen.png')",
+    sinkClean:  "url('/ElleHacks26/choreAssets/dirtyTrashCleanSink.png')",
+    trashClean: "url('/ElleHacks26/choreAssets/dirtySinkCleanTrash.png')",
+    allClean:   "url('/ElleHacks26/choreAssets/allClean.png')"
 };
 
-// --- 3. HELPER FUNCTIONS ---
+//chores
+var chores = [
+    { name: "Sink",  id: "sink",  x: 408, y: 240, cleaned: false },
+    { name: "Trash", id: "trash", x: 664, y: 352, cleaned: false }
+];
 
-// Check if player is near the specific "Press E" spot
-function checkProximity() {
-   var pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
-   
-   // Convert screen target pixels to game coordinates
-   var targetGameX = targetPixelX / pixelSize;
-   var targetGameY = targetPixelY / pixelSize;
+//penny
+function updateStatsBoard() {
+    const raw = localStorage.getItem("finalBalances");
+    const balances = raw ? JSON.parse(raw) : { wallet: 0, spendings: 0, savings: 0, rainyDay: 0 };
+    
+    const goalName = localStorage.getItem("targetGoal") || "Prize";
+    const targetPrice = parseInt(localStorage.getItem("targetPrice")) || 0;
+    const amountNeeded = Math.max(0, targetPrice - balances.savings);
 
-   var dist = Math.sqrt(
-      Math.pow(x - targetGameX, 2) + 
-      Math.pow(y - targetGameY, 2)
-   );
+    if(document.getElementById("stat-wallet")) {
+         document.getElementById("stat-wallet").innerText = balances.wallet;
+         document.getElementById("stat-goal-name").innerText = goalName;
+         document.getElementById("stat-needed").innerText = amountNeeded;
+         document.getElementById("stat-spendings").innerText = balances.spendings;
+         document.getElementById("stat-savings").innerText = balances.savings;
+         document.getElementById("stat-rainyDay").innerText = balances.rainyDay;
+    }
+}
 
-   if (dist < 15) {
-      if(cleanPrompt) cleanPrompt.classList.remove("hidden");
+function getWalletBalance() {
+    const raw = localStorage.getItem("finalBalances");
+    const data = raw ? JSON.parse(raw) : { wallet: 50 }; 
+    return parseInt(data.wallet) || 0;
+}
+
+async function triggerPennyReward() {
+    const previousMoney = getWalletBalance();
+    const rewardAmount = 10;
+    const newTotal = previousMoney + rewardAmount;
+
+    const chatWin = document.getElementById("penny-chat-window");
+    chatWin.classList.remove("chat-hidden");
+
+    addMessage(`Good job!`, "penny-msg");
+    addMessage(`You had $${previousMoney} in your wallet.`, "penny-msg");
+    addMessage(`You just earned $${rewardAmount}!`, "penny-msg");
+    addMessage(`How much money do you have now?`, "penny-msg");
+
+    const currentData = JSON.parse(localStorage.getItem("finalBalances")) || { wallet: 0, spendings:0, savings:0, rainyDay:0 };
+    currentData.wallet = newTotal;
+    localStorage.setItem("finalBalances", JSON.stringify(currentData));
+    
+    updateStatsBoard();
+}
+
+window.sendToGemini = async function() {
+    const inputField = document.getElementById("user-query");
+    const userText = inputField.value.trim();
+    if (!userText) return;
+
+    addMessage(userText, "user-msg");
+    inputField.value = "";
+
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const prompt = `You are Penny the Piggy Bank. 
+        The user just earned money. 
+        User said: "${userText}". 
+        If they did the math right (Previous + 10), congratulate them warmly! 
+        If they got it wrong, gently help them fix it. Keep it short.`;
+        
+        const result = await model.generateContent(prompt);
+        addMessage(result.response.text(), "penny-msg");
+    } catch (e) {
+        addMessage("Oink! I can't hear you right now. But great job!", "penny-msg");
+    }
+};
+
+function addMessage(text, className) {
+    const box = document.getElementById("chat-messages");
+    box.innerHTML += `<p class="${className}">${text}</p>`;
+    box.scrollTop = box.scrollHeight;
+}
+
+window.togglePennyChat = function() {
+    const win = document.getElementById("penny-chat-window");
+    win.classList.toggle("chat-hidden");
+}
+
+function updateMapBackground() {
+   var sinkState = chores.find(c => c.id === "sink").cleaned;
+   var trashState = chores.find(c => c.id === "trash").cleaned;
+
+   if (sinkState && trashState) {
+       map.style.backgroundImage = bgImages.allClean;
+       
+       var successModal = document.getElementById("success-modal");
+       successModal.classList.remove("hidden");
+       setTimeout(triggerPennyReward, 1000); 
+       
+   } else if (sinkState && !trashState) {
+       map.style.backgroundImage = bgImages.sinkClean;
+   } else if (!sinkState && trashState) {
+       map.style.backgroundImage = bgImages.trashClean;
    } else {
-      if(cleanPrompt) cleanPrompt.classList.add("hidden");
+       map.style.backgroundImage = bgImages.dirty;
    }
 }
 
-// Check proximity to generic objects (red boxes)
-function checkInteraction() {
-    const objects = document.querySelectorAll('.object');
-    let nearbyObject = null;
-    objects.forEach(obj => {
-       const pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
-       const objRect = obj.getBoundingClientRect();
-       const mapRect = map.getBoundingClientRect();
-       const objX = (objRect.left - mapRect.left) / pixelSize;
-       const objY = (objRect.top - mapRect.top) / pixelSize;
-       const dist = Math.sqrt(Math.pow(x - objX, 2) + Math.pow(y - objY, 2));
- 
-       if (dist < 20) {
-          nearbyObject = obj;
-       }
-    });
-    return nearbyObject;
- }
-
-function showDialog(text) {
-   dialogText.innerText = text;
-   dialogBox.classList.remove("hidden");
-   setTimeout(() => {
-      dialogBox.classList.add("hidden");
-   }, 2000);
+function checkProximity() {
+     var pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
+     activeItem = null;
+     var foundAny = false;
+     chores.forEach(chore => {
+         if (chore.cleaned) return; 
+         var targetGameX = chore.x / pixelSize;
+         var targetGameY = chore.y / pixelSize;
+         var dist = Math.sqrt(Math.pow(x - targetGameX, 2) + Math.pow(y - targetGameY, 2));
+         if (dist < 15) { activeItem = chore; foundAny = true; }
+     });
+     if (foundAny && cleanPrompt) {
+        cleanPrompt.innerHTML = `Press <b>E</b> to clean ${activeItem.name} (+5$)`;
+        cleanPrompt.classList.remove("hidden");
+     } else if (cleanPrompt) {
+        cleanPrompt.classList.add("hidden");
+     }
 }
 
-// --- 4. MOVEMENT LOGIC ---
 const placeCharacter = () => {
-   var pixelSize = parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue('--pixel-size')
-   );
-   
-   const held_direction = held_directions[0];
-   if (held_direction) {
-      if (held_direction === directions.right) {x += speed;}
-      if (held_direction === directions.left) {x -= speed;}
-      if (held_direction === directions.down) {y += speed;}
-      if (held_direction === directions.up) {y -= speed;}
-      character.setAttribute("facing", held_direction);
-   }
-   character.setAttribute("walking", held_direction ? "true" : "false");
-   
-   // WALL LIMITS
-   var leftLimit = -8;
-   var rightLimit = (16 * 20) + 8; // Expanded width
-   var topLimit = -8 + 32;
-   var bottomLimit = (16 * 20);    // Expanded height
-
-   if (x < leftLimit) { x = leftLimit; }
-   if (x > rightLimit) { x = rightLimit; }
-   if (y < topLimit) { y = topLimit; }
-   if (y > bottomLimit) { y = bottomLimit; }
-   
-   var camera_left = pixelSize * 66;
-   var camera_top = pixelSize * 42;
-   
-   map.style.transform = `translate3d( ${-x*pixelSize+camera_left}px, ${-y*pixelSize+camera_top}px, 0 )`;
-   character.style.transform = `translate3d( ${x*pixelSize}px, ${y*pixelSize}px, 0 )`;  
+     var pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
+     const held_direction = held_directions[0];
+     if (held_direction) {
+        if (held_direction === directions.right) {x += speed;}
+        if (held_direction === directions.left) {x -= speed;}
+        if (held_direction === directions.down) {y += speed;}
+        if (held_direction === directions.up) {y -= speed;}
+        character.setAttribute("facing", held_direction);
+     }
+     character.setAttribute("walking", held_direction ? "true" : "false");
+     
+     var leftLimit = -8; var rightLimit = (16 * 20) + 8; 
+     var topLimit = -8 + 32; var bottomLimit = (16 * 20);    
+     if (x < leftLimit) { x = leftLimit; }
+     if (x > rightLimit) { x = rightLimit; }
+     if (y < topLimit) { y = topLimit; }
+     if (y > bottomLimit) { y = bottomLimit; }
+     
+     var camera_left = pixelSize * 66; var camera_top = pixelSize * 42;
+     map.style.transform = `translate3d( ${-x*pixelSize+camera_left}px, ${-y*pixelSize+camera_top}px, 0 )`;
+     character.style.transform = `translate3d( ${x*pixelSize}px, ${y*pixelSize}px, 0 )`;  
 }
 
-// --- 5. THE GAME LOOP ---
-const step = () => {
-   placeCharacter();
-   checkProximity(); // Check for the "E" prompt every frame
-   window.requestAnimationFrame(() => {
-      step();
-   })
-}
+const step = () => { placeCharacter(); checkProximity(); window.requestAnimationFrame(step); }
 
-step(); // Start the game!
+// Initialize
+updateStatsBoard(); // Load stats on start
+step(); 
 
-// --- 6. CONTROLS ---
-
-// "E" Key Listener
+// CONTROLS
 document.addEventListener("keydown", (e) => {
-   if (!cleanPrompt.classList.contains("hidden") && (e.code === "KeyE" || e.key === "e")) {
-      alert("You cleaned the spot!"); 
-      cleanPrompt.classList.add("hidden");
-   }
+     if (activeItem && !cleanPrompt.classList.contains("hidden") && (e.code === "KeyE" || e.key === "e")) {
+        activeItem.cleaned = true;
+        updateMapBackground();
+        cleanPrompt.classList.add("hidden");
+        alert("You gained $5 for cleaning!");
+     }
 });
 
-// Spacebar Listener
+const directions = { up: "up", down: "down", left: "left", right: "right" }
+const keys = { 38: directions.up, 37: directions.left, 39: directions.right, 40: directions.down }
 document.addEventListener("keydown", (e) => {
-   if (e.code === "Space" || e.code === "Enter") {
-      const obj = checkInteraction();
-      if (obj) {
-         const name = obj.dataset.name;
-         const item = kitchenState[name];
-         if (item && item.dirty) {
-            item.dirty = false;
-            obj.classList.add("clean");
-            showDialog(`You cleaned the ${name}!`);
-         } else if (item) {
-            showDialog(item.message_clean);
-         }
-      }
-   }
-});
-
-// Movement Keys
-const directions = {
-   up: "up", down: "down", left: "left", right: "right",
-}
-const keys = {
-   38: directions.up, 37: directions.left, 39: directions.right, 40: directions.down,
-}
-
-document.addEventListener("keydown", (e) => {
-   var dir = keys[e.which];
-   if (dir && held_directions.indexOf(dir) === -1) {
-      held_directions.unshift(dir)
-   }
+     var dir = keys[e.which];
+     if (dir && held_directions.indexOf(dir) === -1) held_directions.unshift(dir);
 })
-
 document.addEventListener("keyup", (e) => {
-   var dir = keys[e.which];
-   var index = held_directions.indexOf(dir);
-   if (index > -1) {
-      held_directions.splice(index, 1)
-   }
+     var dir = keys[e.which];
+     var index = held_directions.indexOf(dir);
+     if (index > -1) held_directions.splice(index, 1);
 });
 
-// Touch/Mouse Controls (D-PAD)
+// D-PAD Controls
 var isPressed = false;
 const removePressedAll = () => {
    document.querySelectorAll(".dpad-button").forEach(d => {
@@ -185,7 +214,6 @@ const handleDpadPress = (direction, click) => {
       document.querySelector(".dpad-"+direction).classList.add("pressed");
    }
 }
-// Add your dpad event listeners here (left as is in your original code)
 document.querySelector(".dpad-left").addEventListener("mousedown", (e) => handleDpadPress(directions.left, true));
 document.querySelector(".dpad-up").addEventListener("mousedown", (e) => handleDpadPress(directions.up, true));
 document.querySelector(".dpad-right").addEventListener("mousedown", (e) => handleDpadPress(directions.right, true));

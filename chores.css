@@ -1,230 +1,180 @@
 :root {
-    --pixel-size: 2px;
-    --grid-cell: calc( var(--pixel-size) * 16);
-    --bg: #9fa7e4;
- }
- @media( min-width: 700px ) {
-    :root {
-       --pixel-size: 3px;
-    }
- }
- @media( min-width: 1000px ) {
-    :root {
-       --pixel-size: 4px;
-    }
- }
- /* @media( min-width: 1000px ) {
-    :root {
-       --pixel-size: 5px;
-    }
- } */
- 
- html, body {
-    height: 100%;
- }
- 
- body {
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
- }
- 
- .pixel-art {
-    image-rendering: pixelated;
- }
- 
- .frame {
-    /* This is just for Pen decoration */
-    width: calc(var(--pixel-size) * 160);
-    height: calc(var(--pixel-size) * 144);
-    outline: var(--pixel-size) solid #fff;
-    z-index:1; 
-    position:relative;
- }
- 
- .camera {
-    width: calc(var(--pixel-size) * 160);
-    height: calc(var(--pixel-size) * 144);
-    overflow: hidden;
-    background: #61ddf7;
-    position:relative;
- }
- 
- .map {
-    image-rendering: pixelated;
-    background-image: url(/ElleHacks26/choreAssets/dirtyKitchen.png);
-    background-size: 100%;
-    width: calc(13 * var(--grid-cell));
-    height: calc(10 * var(--grid-cell));
-    position: relative;
- }
- 
- .character {
-    width: calc( var(--grid-cell)* 2 );
-    height: calc( var(--grid-cell)* 2 );
-    position: absolute;
-    overflow:hidden;
- }
- 
- .shadow {
-    width: calc( var(--grid-cell)* 2 );
-    height: calc( var(--grid-cell)* 2 );
-    position: absolute;
-    left:0;
-    top:0;
-    background: url("https://assets.codepen.io/21542/DemoRpgCharacterShadow.png") no-repeat no-repeat;
-    background-size: 100%;
- }
- 
- .character_spritesheet {
-    position: absolute;
-    background: url("/ElleHacks26/choreAssets/spriteSheetCores.png") no-repeat no-repeat;
-    background-size: 100%;
-    width: calc( var(--grid-cell)* 8 );
-    height: calc( var(--grid-cell)* 8 );
- }
- 
- .character[facing="right"] .character_spritesheet {
-    background-position-y: calc( var(--pixel-size) * -32 );
- }
- .character[facing="up"] .character_spritesheet {
-    background-position-y: calc( var(--pixel-size) * -64 );
- }
- .character[facing="left"] .character_spritesheet {
-    background-position-y: calc( var(--pixel-size) * -96 );
- }
- .character[walking="true"] .character_spritesheet {
-    animation: walkAnimation 0.6s steps(4) infinite; 
- }
- 
- @keyframes walkAnimation {
-   from {
-     transform: translate3d(0%,0%,0);
-   }
-   to {
-     transform: translate3d(-100%,0%,0);
-   }
- }
- 
- .dpad {
-    position:absolute;
-    right: calc(var(--pixel-size) * 2);
-    bottom: calc(var(--pixel-size) * 2);
-    width: calc(var(--pixel-size) * 37);
-    height: calc(var(--pixel-size) * 38);
- }
- .dpad-button {
-    appearance:none;
-    outline:0;
-    border:0;
-    background:transparent;
-    padding:0;
-    cursor:pointer;
- }
- .dpad-button svg {
-    display:block;
-    height: calc(var(--pixel-size) * 13);
- }
- 
- .dpad-button.pressed .Arrow_arrow-inset { stroke:#07c2cc; }
- .dpad-button.pressed .Arrow_arrow-body { stroke:#17dfea; }
- 
- .dpad-up {
-    position: absolute;
-    left: calc(var(--pixel-size) * 12);
-    top:0;
- }
- .dpad-down {
-    position: absolute;
-    bottom:var(--pixel-size);
-    left: calc(var(--pixel-size) * 12);
- }
- .dpad-left {
-    position: absolute;
-    top: calc(var(--pixel-size) * 12);
-    left:0;
- }
- .dpad-right {
-    position: absolute;
-    top: calc(var(--pixel-size) * 12);
-    right:0;
- }
- 
- .dpad {
-    user-select:none;
- }
- 
- 
- .corner_topleft,
- .corner_topright,
- .corner_bottomleft,
- .corner_bottomright {
-    position: absolute;
-    width: var(--pixel-size);
-    height: var(--pixel-size);
-    background: var(--bg);
-    z-index:2;
- }
- 
- .corner_topleft {
-    top: calc(var(--pixel-size) * -1);
-    left: calc(var(--pixel-size) * -1);
- }
- .corner_topright {
-    top: calc(var(--pixel-size) * -1);
-    right: calc(var(--pixel-size) * -1);
- }
- .corner_bottomleft {
-    bottom: calc(var(--pixel-size) * -1);
-    left: calc(var(--pixel-size) * -1);
- }
- .corner_bottomright {
-    bottom: calc(var(--pixel-size) * -1);
-    right: calc(var(--pixel-size) * -1);
- }
- 
- .headline {
-    position:absolute;
-    top:calc(var(--pixel-size) * 2);
-    right:calc(var(--pixel-size) * 2);
-    width: calc(var(--pixel-size) * 75)
- }
+   --pixel-size: 2px;
+   --grid-cell: calc( var(--pixel-size) * 16);
+   --bg: #9fa7e4;
+}
+@media( min-width: 700px ) { :root { --pixel-size: 3px; } }
+@media( min-width: 1000px ) { :root { --pixel-size: 4px; } }
 
- /* Styling for the interaction zones */
-.kitchen_objects {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
- }
- 
- .object {
-    position: absolute;
-    background: rgba(255, 0, 0, 0.3); /* Semi-transparent red so you can see them for testing */
-    /* Remove the background line above once you have your real kitchen map image! */
- }
- 
- /* Position your items (These numbers depend on your map image) */
- .sink { width: 32px; height: 32px; top: 32px; left: 48px; }
- .dishwasher { width: 32px; height: 32px; top: 32px; left: 80px; }
- .trash { width: 16px; height: 16px; top: 100px; left: 150px; }
- .fridge { width: 32px; height: 48px; top: 32px; left: 160px; }
- 
- /* Status Styles */
- .object.clean { background: rgba(0, 255, 0, 0.3); } /* Turns green when clean */
- 
- /* Dialog Box */
- .dialog-box {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    border: 2px solid #000;
-    padding: 10px;
-    font-family: monospace;
-    font-size: 14px;
-    z-index: 10;
-    width: 80%;
-    text-align: center;
- }
- .hidden { display: none; }
+html, body { height: 100%; }
+body {
+   background: var(--bg);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin: 0;
+   overflow: hidden;
+   font-family: sans-serif;
+}
+
+/* stat board */
+.stats-board {
+   position: absolute; 
+   top: 20px; 
+   left: 20px; 
+   width: 200px; 
+   background: rgba(255, 255, 255, 0.9); 
+   padding: 15px;
+   border-radius: 20px;
+   border: 4px solid #22c55e; 
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+   z-index: 150; 
+   font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.stats-board h3 { margin-top: 0; color: #166534; text-align: center; font-size: 1.2rem; }
+.stats-board p { margin: 5px 0; color: #14532d; font-size: 1rem; }
+.stats-board hr { border: none; border-top: 2px dashed #22c55e; margin: 10px 0; }
+
+/* views */
+.pixel-art { image-rendering: pixelated; }
+.frame {
+   width: calc(var(--pixel-size) * 160);
+   height: calc(var(--pixel-size) * 144);
+   outline: var(--pixel-size) solid #fff;
+   z-index: 1; position: relative;
+}
+.camera {
+   width: calc(var(--pixel-size) * 160);
+   height: calc(var(--pixel-size) * 144);
+   overflow: hidden;
+   background: #61ddf7;
+   position: relative;
+}
+.map {
+   image-rendering: pixelated;
+   background-image: url(/ElleHacks26/choreAssets/dirtyKitchen.png);
+   background-size: 100%;
+   width: calc(13 * var(--grid-cell));
+   height: calc(10 * var(--grid-cell));
+   position: relative;
+}
+.character {
+   width: calc( var(--grid-cell)* 2 );
+   height: calc( var(--grid-cell)* 2 );
+   position: absolute; overflow: hidden;
+}
+.shadow {
+   width: calc( var(--grid-cell)* 2 );
+   height: calc( var(--grid-cell)* 2 );
+   position: absolute; left:0; top:0;
+   background: url("https://assets.codepen.io/21542/DemoRpgCharacterShadow.png") no-repeat no-repeat;
+   background-size: 100%;
+}
+.character_spritesheet {
+   position: absolute;
+   background: url(/ElleHacks26/choreAssets/twoCol.png) no-repeat no-repeat;
+   background-size: 100%;
+   width: calc( var(--grid-cell)* 8 );
+   height: calc( var(--grid-cell)* 8 );
+}
+.character[facing="right"] .character_spritesheet { background-position-y: calc( var(--pixel-size) * -32 ); }
+.character[facing="up"] .character_spritesheet { background-position-y: calc( var(--pixel-size) * -64 ); }
+.character[facing="left"] .character_spritesheet { background-position-y: calc( var(--pixel-size) * -96 ); }
+.character[walking="true"] .character_spritesheet { animation: walkAnimation 0.6s steps(4) infinite; }
+@keyframes walkAnimation { from { transform: translate3d(0%,0%,0); } to { transform: translate3d(-100%,0%,0); } }
+
+/* controls */
+.dpad {
+   position:absolute; right: calc(var(--pixel-size) * 2); bottom: calc(var(--pixel-size) * 2);
+   width: calc(var(--pixel-size) * 37); height: calc(var(--pixel-size) * 38); user-select:none;
+}
+.dpad-button { appearance:none; outline:0; border:0; background:transparent; padding:0; cursor:pointer; }
+.dpad-button svg { display:block; height: calc(var(--pixel-size) * 13); }
+.dpad-button.pressed .Arrow_arrow-inset { stroke:#07c2cc; }
+.dpad-button.pressed .Arrow_arrow-body { stroke:#17dfea; }
+.dpad-up { position: absolute; left: calc(var(--pixel-size) * 12); top:0; }
+.dpad-down { position: absolute; bottom:var(--pixel-size); left: calc(var(--pixel-size) * 12); }
+.dpad-left { position: absolute; top: calc(var(--pixel-size) * 12); left:0; }
+.dpad-right { position: absolute; top: calc(var(--pixel-size) * 12); right:0; }
+
+.corner_topleft, .corner_topright, .corner_bottomleft, .corner_bottomright {
+   position: absolute; width: var(--pixel-size); height: var(--pixel-size); background: var(--bg); z-index:2;
+}
+.corner_topleft { top: calc(var(--pixel-size) * -1); left: calc(var(--pixel-size) * -1); }
+.corner_topright { top: calc(var(--pixel-size) * -1); right: calc(var(--pixel-size) * -1); }
+.corner_bottomleft { bottom: calc(var(--pixel-size) * -1); left: calc(var(--pixel-size) * -1); }
+.corner_bottomright { bottom: calc(var(--pixel-size) * -1); right: calc(var(--pixel-size) * -1); }
+
+/*kitchen */
+.kitchen_objects { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.object { position: absolute; background: rgba(255, 0, 0, 0.3); }
+.sink { width: 32px; height: 32px; top: 32px; left: 48px; }
+.dishwasher { width: 32px; height: 32px; top: 32px; left: 80px; }
+.trash { width: 16px; height: 16px; top: 100px; left: 150px; }
+
+/* dialog  */
+.dialog-box {
+   position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+   background: white; border: 2px solid #000; padding: 10px;
+   font-family: monospace; font-size: 12px; z-index: 10; width: 80%;
+   text-align: center; pointer-events: none;
+}
+.hidden { display: none !important; }
+
+/* done chores  */
+#success-modal {
+   top: 50%; transform: translate(-50%, -50%); bottom: auto;
+   width: 500px; text-align: center; z-index: 100; pointer-events: auto;
+}
+#success-modal img { width: 100%; margin-bottom: 10px; display: block; cursor: pointer; }
+
+#penny-chat-window {
+   position: fixed; bottom: 120px; right: 20px; width: 340px; height: 480px;
+   background: white; border: 4px solid #22c55e; border-radius: 20px;
+   display: flex; flex-direction: column; z-index: 2001;
+   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+   font-family: "Comic Sans MS", cursive, sans-serif;
+}
+.chat-header {
+   background: #22c55e; color: white; padding: 12px; font-weight: bold;
+   display: flex; justify-content: space-between; align-items: center;
+   border-top-left-radius: 15px; border-top-right-radius: 15px;
+}
+.close-chat { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+#chat-messages {
+   flex: 1; padding: 15px; overflow-y: auto; display: flex;
+   flex-direction: column; gap: 12px; background: #f9fffb; scroll-behavior: smooth;
+}
+.penny-msg {
+   background: #dcfce7; color: #166534; padding: 12px;
+   border-radius: 15px 15px 15px 5px; align-self: flex-start; max-width: 80%;
+   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); white-space: pre-line; margin: 0;
+}
+.user-msg {
+   background: #dbeafe; color: #1e40af; padding: 12px;
+   border-radius: 15px 15px 5px 15px; align-self: flex-end; text-align: right;
+   max-width: 80%; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); margin: 0;
+}
+.chat-input-area {
+   display: flex; padding: 15px; background: white; border-top: 2px solid #eee;
+   border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; gap: 10px;
+}
+.chat-input-area input { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 10px; outline: none; }
+.chat-input-area input:focus { border-color: #22c55e; }
+.chat-input-area button {
+   background: #22c55e; color: white; border: none; padding: 8px 15px;
+   border-radius: 10px; font-weight: bold; cursor: pointer;
+}
+.chat-input-area button:hover { background: #16a34a; }
+
+.penny-fixed-corner {
+   position: fixed; bottom: 20px; right: 20px; cursor: pointer; z-index: 2000;
+   transition: transform 0.3s ease;
+}
+.penny-fixed-corner:hover { transform: scale(1.1) rotate(5deg); }
+#penny-icon {
+   width: 90px; height: 90px; border-radius: 50%; border: 5px solid #22c55e;
+   background: white; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); display: block;
+}
+.chat-hidden { display: none !important; }
